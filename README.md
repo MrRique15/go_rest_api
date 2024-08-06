@@ -8,6 +8,7 @@ This is a simple API built with the Go programming language and the Gin web fram
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
 - [Running the Application](#running-the-application)
+- [Building the Application](#building-the-application)
 - [Contributing](#contributing)
 - [License](#license)
 
