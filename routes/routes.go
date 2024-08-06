@@ -1,7 +1,7 @@
-package Routes
+package Router
 
 import (
-	"fmt"
+	"errors"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -11,9 +11,9 @@ import (
 
 type RouterType *gin.Engine
 
-func InitMainRouter() (newRouter *gin.Engine) {
-	newRouter = gin.Default()
-	return
+func InitMainRouter() *gin.Engine {
+	newRouter := gin.Default()
+	return newRouter
 }
 
 func AlbumsRouter(router *gin.Engine) {
@@ -27,19 +27,17 @@ func UsersRouter(router *gin.Engine) {
 	router.POST("/users/register", Controllers.RegisterUser)
 }
 
-func RunRouter(router *gin.Engine, addr string) (status string) {
-	var addressArray = strings.Split(addr, ":")
+func RunRouter(router *gin.Engine, addr string) error {
+	addressArray := strings.Split(addr, ":")
 
 	if len(addressArray) != 2 {
-		fmt.Println("Invalid Host Address Inserted: " + addr)
-		return "fail"
+		return errors.New("Invalid Host Address Inserted: " + addr)
 	}
 
 	if addressArray[1] == "" || addressArray[1] == " " {
-		fmt.Println("Invalid Host Address Inserted: " + addr)
-		return "fail"
+		return errors.New("Invalid Host Address Inserted: " + addr)
 	}
 
 	router.Run(addr)
-	return "sucess"
+	return nil
 }

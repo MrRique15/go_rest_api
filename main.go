@@ -2,21 +2,19 @@ package main
 
 import (
 	"fmt"
-	Routes "go_rest_api/routes"
+	Router "go_rest_api/routes"
 )
 
 var defaultAddress = "localhost:8080"
 
 func main() {
-	var mainRouter Routes.RouterType = Routes.InitMainRouter()
+	mainRouter := Router.InitMainRouter()
 
-	Routes.AlbumsRouter(mainRouter)
-	Routes.UsersRouter(mainRouter)
+	Router.AlbumsRouter(mainRouter)
+	Router.UsersRouter(mainRouter)
 
-	var runStatus = Routes.RunRouter(mainRouter, defaultAddress)
-
-	if runStatus == "fail" {
-		fmt.Println("Internal Server Error, Exiting API")
-		return
-	}
+	if err := Router.RunRouter(mainRouter, defaultAddress); err != nil {
+        fmt.Println("Internal Server Error, Exiting API")
+        return
+    }
 }
