@@ -1,27 +1,29 @@
 package Services
 
 import (
+	"errors"
 	Repositores "go_rest_api/repositories"
 	Structs "go_rest_api/structs"
 )
 
-func ListAlbums() (albumsList []Structs.Album) {
-	albumsList = Repositores.ListAlbums()
-	return
+func ListAlbums() []Structs.Album {
+	albumsList := Repositores.ListAlbums()
+	return albumsList
 }
 
-func AddAlbum(album Structs.Album) (newAlbum Structs.Album) {
-	var sameAlbum = Repositores.FindAlbumById(album.ID)
+func AddAlbum(album Structs.Album) (Structs.Album, error) {
+	existingAlbum , err := Repositores.FindAlbumById(album.ID)
 
-	if sameAlbum.ID != "" {
-		return
+	if err == nil {
+		return existingAlbum, errors.New("album already registered with inserted id")
 	}
 
-	newAlbum = Repositores.AddAlbum(album)
-	return
+	newAlbum, err := Repositores.AddAlbum(album)
+
+	return newAlbum, err
 }
 
-func GetAlbumById(id string) (foundAlbum Structs.Album) {
-	foundAlbum = Repositores.FindAlbumById(id)
-	return
+func GetAlbumById(id string) (Structs.Album, error) {
+	foundAlbum, err := Repositores.FindAlbumById(id)
+	return foundAlbum, err
 }

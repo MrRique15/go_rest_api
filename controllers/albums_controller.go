@@ -1,7 +1,6 @@
 package Controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,13 +23,14 @@ func PostAlbums(c *gin.Context) {
 	// Call BindJSON to bind the received JSON to
 	// newAlbum.
 	if err := c.BindJSON(&newAlbum); err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "insert a valid album format"})
 		return
 	}
 
-	newAlbum = Services.AddAlbum(newAlbum)
+	newAlbum, err := Services.AddAlbum(newAlbum)
 
-	if newAlbum.ID == "" {
-		c.IndentedJSON(http.StatusForbidden, gin.H{"message": "An album already exists with given ID"})
+	if err != nil {
+		c.IndentedJSON(http.StatusForbidden, gin.H{"message": "album already inserted with given id"})
 		return
 	}
 
@@ -44,13 +44,12 @@ func GetAlbumByID(c *gin.Context) {
 
 	if id == "" || id == " " {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "A valid ID must be inserted"})
+		return
 	}
 
-	var album = Services.GetAlbumById(id)
+	album, err := Services.GetAlbumById(id)
 
-	fmt.Println(album)
-
-	if album.ID == "" {
+	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
 		return
 	}

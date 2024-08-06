@@ -19,11 +19,12 @@ func InitMainRouter() (newRouter *gin.Engine) {
 func AlbumsRouter(router *gin.Engine) {
 	router.GET("/albums", Controllers.GetAlbums)
 	router.GET("/albums/:id", Controllers.GetAlbumByID)
-	router.POST("/albums", Controllers.PostAlbums)
+	router.POST("/albums/add", Controllers.PostAlbums)
 }
 
 func UsersRouter(router *gin.Engine) {
 	router.POST("/users/login", Controllers.LogInUser)
+	router.POST("/users/register", Controllers.RegisterUser)
 }
 
 func RunRouter(router *gin.Engine, addr string) (status string) {
