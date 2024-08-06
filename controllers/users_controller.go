@@ -5,11 +5,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	Services "example/web-service-gin/services"
-	Structs "example/web-service-gin/structs"
+	Services "go_rest_api/services"
+	Structs "go_rest_api/structs"
 )
 
-func LogInUser(user *gin.Context){
+func LogInUser(user *gin.Context) {
 	var logginUser Structs.LoginUser
 
 	if err := user.BindJSON(&logginUser); err != nil {
@@ -18,7 +18,7 @@ func LogInUser(user *gin.Context){
 
 	var loggedUser = Services.LogInUser(logginUser)
 
-	if(loggedUser.ID == ""){
+	if loggedUser.ID == "" {
 		user.IndentedJSON(http.StatusNotFound, gin.H{"message": "Invalid Email or Password Inserted"})
 		return
 	}

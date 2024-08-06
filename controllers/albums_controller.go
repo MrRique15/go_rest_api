@@ -6,43 +6,43 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	Services "example/web-service-gin/services"
-	Structs "example/web-service-gin/structs"
+	Services "go_rest_api/services"
+	Structs "go_rest_api/structs"
 )
 
 // getAlbums responds with the list of all albums as JSON.
 func GetAlbums(c *gin.Context) {
 	var albumsList = Services.ListAlbums()
 
-    c.IndentedJSON(http.StatusOK, albumsList)
+	c.IndentedJSON(http.StatusOK, albumsList)
 }
 
 // postAlbums adds an album from JSON received in the request body.
 func PostAlbums(c *gin.Context) {
-    var newAlbum Structs.Album
+	var newAlbum Structs.Album
 
 	// Call BindJSON to bind the received JSON to
-    // newAlbum.
-    if err := c.BindJSON(&newAlbum); err != nil {
-        return
-    }
+	// newAlbum.
+	if err := c.BindJSON(&newAlbum); err != nil {
+		return
+	}
 
 	newAlbum = Services.AddAlbum(newAlbum)
 
-	if(newAlbum.ID == ""){
+	if newAlbum.ID == "" {
 		c.IndentedJSON(http.StatusForbidden, gin.H{"message": "An album already exists with given ID"})
 		return
 	}
 
-    c.IndentedJSON(http.StatusCreated, newAlbum)
+	c.IndentedJSON(http.StatusCreated, newAlbum)
 }
 
 // getAlbumByID locates the album whose ID value matches the id
 // parameter sent by the client, then returns that album as a response.
 func GetAlbumByID(c *gin.Context) {
-    id := c.Param("id")
+	id := c.Param("id")
 
-	if(id == "" || id == " "){
+	if id == "" || id == " " {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "A valid ID must be inserted"})
 	}
 
@@ -50,7 +50,7 @@ func GetAlbumByID(c *gin.Context) {
 
 	fmt.Println(album)
 
-	if(album.ID == ""){
+	if album.ID == "" {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "album not found"})
 		return
 	}

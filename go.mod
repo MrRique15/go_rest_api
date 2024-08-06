@@ -1,4 +1,4 @@
-module example/web-service-gin
+module go_rest_api
 
 go 1.22.6
 

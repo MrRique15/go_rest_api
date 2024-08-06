@@ -6,7 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	Controllers "example/web-service-gin/controllers"
+	Controllers "go_rest_api/controllers"
 )
 
 type RouterType *gin.Engine
