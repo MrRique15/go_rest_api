@@ -169,12 +169,12 @@ go build
 ```
 And then run it by executing the right command for your OS:
 
-###Windows
+### Windows
 ```bash
 .\go_rest_api.exe
 ```
 
-###Linux
+### Linux
 ```bash
 ./go_rest_api
 ```
