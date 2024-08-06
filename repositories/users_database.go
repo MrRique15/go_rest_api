@@ -6,7 +6,7 @@ import (
 )
 
 var Users = []Structs.User{
-	{ID: "1", Name: "Admin", Email: "henrique-favaro@hotmail.com", Password: "1234"},
+	{ID: "1", Name: "Admin", Email: "admin@admin.com", Password: "1234"},
 }
 
 func GetUserByEmail(email string) (Structs.User, error) {
