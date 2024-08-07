@@ -10,7 +10,6 @@ type User struct {
 }
 
 type RegisterUser struct {
-    ID              primitive.ObjectID `json:"id"`
     Name            string             `json:"name" validate:"required"`
     Email           string             `json:"email" validate:"required"`
     Password        string             `json:"password" validate:"required"`

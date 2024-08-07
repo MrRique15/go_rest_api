@@ -43,66 +43,6 @@ The server will start on `http://localhost:8080`.
 
 ## API Endpoints
 
-### GET /albums
-
-- **Description**: Returns a list of registered albums.
-- **Response**: 
-  - Status: `200 OK`
-  - Body: 
-    ```json
-    [
-	    {
-	    	"id": "string",
-	    	"title": "string",
-	    	"artist": "string",
-	    	"price": "float64"
-	    }
-        ...
-    ]
-    ```
-
-### POST /albums/add
-
-- **Description**: Register a new album in the system.
-- **Request Body**: 
-  - Example:
-    ```json
-    {
-	    "id": "4",
-	    "title": "The golang Manual",
-	    "artist": "Unknown Author",
-	    "price": 15.20
-    }
-    ```
-- **Response**: 
-  - Status: `201 Created`
-  - Body:
-    ```json
-    {
-	    "id": "4",
-	    "title": "The golang Manual",
-	    "artist": "Unknown Author",
-	    "price": 15.20
-    }
-    ```
-
-### GET /albums/:id
-
-- **Description**: Retrieves an album by its ID.
-- **Parameters**:
-  - `id`: The ID of the album.
-- **Response**: 
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-	    "id": "string",
-	    "title": "string",
-	    "artist": "string",
-	    "price": "float64"
-    }
-    ```
-
 ### POST /users/register
 
 - **Description**: Register a new user in the system.
@@ -110,11 +50,10 @@ The server will start on `http://localhost:8080`.
   - Example:
     ```json
     {
-	    "id": "2",
-	    "name": "Some New User",
-	    "email": "test@test.com",
-	    "password": "testPassword123",
-	    "confirm_password": "testPassword123"
+	    "name": "string",
+	    "email": "string",
+	    "password": "string",
+	    "confirm_password": "string"
     }
     ```
 - **Response**: 
@@ -122,10 +61,13 @@ The server will start on `http://localhost:8080`.
   - Body:
     ```json
     {
-	    "id": "2",
-	    "name": "Some New User",
-	    "email": "test@test.com",
-	    "password": "testPassword123"
+	    "status": 201,
+	    "message": "success",
+	    "data": {
+	    	"data": {
+	    		"InsertedID": "ObjectID"
+	    	}
+	    }
     }
     ```
 
@@ -136,8 +78,8 @@ The server will start on `http://localhost:8080`.
   - Example:
     ```json
     {
-	    "email": "test@test.com",
-	    "password": "testPassword123"
+	    "email": "string",
+	    "password": "string"
     }
     ```
 - **Response**: 
@@ -145,10 +87,66 @@ The server will start on `http://localhost:8080`.
   - Body:
     ```json
     {
-	    "id": "2",
-	    "name": "Some New User",
-	    "email": "test@test.com",
-	    "password": "testPassword123"
+	    "status": 200,
+	    "message": "sucess",
+	    "data": {
+	    	"data": {
+	    		"id": "ObjectID",
+	    		"name": "string",
+	    		"email": "string"
+	    	}
+	    }
+    }
+    ```
+
+### PUT /users/edit/:id
+
+- **Description**: Edit an existing user.
+- **Request Body**: 
+  - Example:
+    ```json
+    {
+	    "id": "ObjectID",
+	    "name": "string",
+	    "email": "string",
+	    "old_password": "string",
+	    "new_password": "string"
+    }
+    ```
+- **Response**: 
+  - Status: `200 OK`
+  - Body:
+    ```json
+    {
+	    "status": 200,
+	    "message": "success",
+	    "data": {
+	    	"data": {
+	    		"id": "ObjectID",
+	    		"name": "string",
+	    		"email": "string"
+	    	}
+	    }
+    }
+    ```
+
+### GET /users/:id
+
+- **Description**: Get an user by ID.
+- **Response**: 
+  - Status: `200 OK`
+  - Body:
+    ```json
+    {
+	    "status": 200,
+	    "message": "success",
+	    "data": {
+	    	"data": {
+	    		"id": "ObjectID",
+	    		"name": "string",
+	    		"email": "string"
+	    	}
+	    }
     }
     ```
 
