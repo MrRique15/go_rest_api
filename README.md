@@ -158,6 +158,16 @@ To run the application, execute the following command:
 go run main.go
 ```
 
+## Testing the Application
+
+To test the application, execute the following command:
+
+```bash
+go test -v
+```
+
+It will run all tests that has been set in files like *_test.go
+
 ## Building the Application
 
 To run build application, execute the following command:
