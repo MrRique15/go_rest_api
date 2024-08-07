@@ -1,25 +1,37 @@
 package repositories
 
 import (
-	"context"
 	"errors"
-	"go_rest_api/configs"
 	"go_rest_api/models"
-	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var userCollection *mongo.Collection = configs.GetCollection(configs.DB, "users")
+type UsersRepository struct {
+	db dbHandler
+}
 
-func GetUserByEmail(email string) (models.User, error) {
-	var user models.User
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	
-	err := userCollection.FindOne(ctx, bson.M{"email": email}).Decode(&user)
+type dbHandler interface {
+	InitiateCollection()
+	findOneEmail(email string) (models.User, error)
+	insertOne(user models.User) (models.User, error)
+	findOneID(id primitive.ObjectID) (models.User, error)
+	updateOne(id primitive.ObjectID, user models.User) (models.User, error)
+}
+
+func NewUsersRepository(dbh dbHandler) *UsersRepository {
+	usersRepository := UsersRepository{
+		db: dbh,
+	}
+
+	usersRepository.db.InitiateCollection()
+
+	return &usersRepository
+}
+
+// ------------------------------------------------- Functions ----------------------------
+func (us UsersRepository) GetUserByEmail(email string) (models.User, error) {
+	user, err := us.db.findOneEmail(email)
 
 	if err != nil {
 		return user, errors.New("user not found")
@@ -28,12 +40,8 @@ func GetUserByEmail(email string) (models.User, error) {
 	return user, nil
 }
 
-func GetUserByID(id primitive.ObjectID) (models.User, error) {
-	var user models.User
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	
-	err := userCollection.FindOne(ctx, bson.M{"id": id}).Decode(&user)
+func (us UsersRepository) GetUserByID(id primitive.ObjectID) (models.User, error) {
+	user, err := us.db.findOneID(id)
 
 	if err != nil {
 		return user, errors.New("user not found")
@@ -42,27 +50,20 @@ func GetUserByID(id primitive.ObjectID) (models.User, error) {
 	return user, nil
 }
 
-func RegisterUser(newUser models.User) (*mongo.InsertOneResult, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	result, err := userCollection.InsertOne(ctx, newUser)
+func (us UsersRepository) RegisterUser(newUser models.User) (models.User, error) {
+	user, err := us.db.insertOne(newUser)
 
 	if err != nil {
-		return result, errors.New("error during user registration")
+		return user, errors.New("error during user registration")
 	}
 
-	return result, nil
+	return user, nil
 }
 
-func UpdateUser(user models.User)(*mongo.UpdateResult, error){
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-    defer cancel()
+func (us UsersRepository) UpdateUser(user models.User) (models.User, error) {
+	result, err := us.db.updateOne(user.ID, user)
 
-    update := bson.M{"name": user.Name, "email": user.Email, "password": user.Password}
-    result, err := userCollection.UpdateOne(ctx, bson.M{"id": user.ID}, bson.M{"$set": update})
-
-	if err != nil{
+	if err != nil {
 		return result, errors.New("error during user update")
 	}
 

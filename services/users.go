@@ -7,20 +7,31 @@ import (
 	"go_rest_api/utils"
 	"go_rest_api/repositories"
 
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func RegisterUser(user models.User) (*mongo.InsertOneResult, error) {
-	_, err := repositories.GetUserByEmail(user.Email)
+type UsersService struct {
+	usersRepository *repositories.UsersRepository
+}
+
+func NewUsersService(usr *repositories.UsersRepository) *UsersService {
+	usersService := UsersService{
+		usersRepository: usr,
+	}
+
+	return &usersService
+}
+
+func (us UsersService) RegisterUser(user models.User) (models.User, error) {
+	_, err := us.usersRepository.GetUserByEmail(user.Email)
 
 	if err == nil {
-		return nil, errors.New("email already registered")
+		return models.User{}, errors.New("email already registered")
 	}
 
 	hashedPass, err := utils.GenerateHashFromPassword(user.Password)
 	if err != nil{
-		return nil, errors.New("error during password encrypt")
+		return models.User{}, errors.New("error during password encrypt")
 	}
 
 	userToInsert := models.User{
@@ -30,26 +41,26 @@ func RegisterUser(user models.User) (*mongo.InsertOneResult, error) {
 		Password: hashedPass,
 	}
 
-	registeredUser, err := repositories.RegisterUser(userToInsert)
+	registeredUser, err := us.usersRepository.RegisterUser(userToInsert)
 
 	return registeredUser, err
 }
 
-func GetUserById(id primitive.ObjectID) (models.User, error){
-	result, err := repositories.GetUserByID(id)
+func (us UsersService) GetUserById(id primitive.ObjectID) (models.User, error){
+	user, err := us.usersRepository.GetUserByID(id)
 
 	if err != nil {
-		return result, errors.New("user not found")
+		return models.User{}, errors.New("user not found")
 	}
 
-	return result, nil
+	return user, nil
 }
 
-func UpdateUser(user models.EditingUser) (*mongo.UpdateResult, error){
-	existingUser, err := repositories.GetUserByID(user.ID)
+func (us UsersService) UpdateUser(user models.EditingUser) (models.User, error){
+	existingUser, err := us.usersRepository.GetUserByID(user.ID)
 
 	if err != nil{
-		return nil, errors.New("user not found")
+		return models.User{}, errors.New("user not found")
 	}
 
 	insertedPass := user.OldPassword
@@ -58,13 +69,13 @@ func UpdateUser(user models.EditingUser) (*mongo.UpdateResult, error){
 	err = utils.ComparePasswords(insertedPass, existingPass)
 
 	if err != nil {
-		return nil, errors.New("invalid credentials for user update")
+		return models.User{}, errors.New("invalid credentials for user update")
 	}
 
 	newHashedPass, err := utils.GenerateHashFromPassword(user.NewPassword) 
 
 	if err != nil{
-		return nil, errors.New("error during password encrypt")
+		return models.User{}, errors.New("error during password encrypt")
 	}
 	
 	userToUpdate := models.User{
@@ -74,20 +85,20 @@ func UpdateUser(user models.EditingUser) (*mongo.UpdateResult, error){
 		Password: newHashedPass,
 	}
 
-	result, err := repositories.UpdateUser(userToUpdate)
+	updatedUser, err := us.usersRepository.UpdateUser(userToUpdate)
 
 	if err != nil {
-		return nil, errors.New("error updating user")
+		return models.User{}, errors.New("error updating user")
 	}
 
-	return result, nil
+	return updatedUser, nil
 }
 
-func LoginUser(loginObject models.UserLogin) (models.User, error){
-	existingUser, err := repositories.GetUserByEmail(loginObject.Email)
+func (us UsersService) LoginUser(loginObject models.UserLogin) (models.User, error){
+	existingUser, err := us.usersRepository.GetUserByEmail(loginObject.Email)
 
 	if err != nil{
-		return existingUser, errors.New("user not found")
+		return models.User{}, errors.New("user not found")
 	}
 
 	insertedPass := loginObject.Password
@@ -95,7 +106,7 @@ func LoginUser(loginObject models.UserLogin) (models.User, error){
 	error := utils.ComparePasswords(insertedPass, existingPass)
 
 	if error != nil{
-		return existingUser, errors.New("invalid credentials")
+		return models.User{}, errors.New("invalid credentials")
 	}
 
 	return existingUser, nil
