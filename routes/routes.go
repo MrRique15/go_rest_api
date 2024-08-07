@@ -1,12 +1,11 @@
-package Router
+package router
 
 import (
 	"errors"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-
-	Controllers "go_rest_api/controllers"
+	"go_rest_api/controllers"
 )
 
 type RouterType *gin.Engine
@@ -16,15 +15,11 @@ func InitMainRouter() *gin.Engine {
 	return newRouter
 }
 
-func AlbumsRouter(router *gin.Engine) {
-	router.GET("/albums", Controllers.GetAlbums)
-	router.GET("/albums/:id", Controllers.GetAlbumByID)
-	router.POST("/albums/add", Controllers.PostAlbums)
-}
-
 func UsersRouter(router *gin.Engine) {
-	router.POST("/users/login", Controllers.LogInUser)
-	router.POST("/users/register", Controllers.RegisterUser)
+	router.PUT("/users/edit/:id", controllers.EditUser)
+	router.GET("/users/:id", controllers.GetUserByID)
+	router.POST("/users/register", controllers.RegisterUser)
+	router.POST("/users/login", controllers.LoginUser)
 }
 
 func RunRouter(router *gin.Engine, addr string) error {
