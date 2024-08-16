@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-	"main_api/models"
-	"main_api/producers"
+
+	"github.com/MrRique15/go_rest_api/main_api/models"
+	"github.com/MrRique15/go_rest_api/main_api/producers"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

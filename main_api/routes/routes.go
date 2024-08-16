@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"main_api/controllers"
+	"github.com/MrRique15/go_rest_api/main_api/controllers"
 
 	"github.com/gin-gonic/gin"
 )

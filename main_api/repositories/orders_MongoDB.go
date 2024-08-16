@@ -3,9 +3,10 @@ package repositories
 import (
 	"context"
 	"errors"
-	"main_api/configs"
-	"main_api/models"
 	"time"
+
+	"github.com/MrRique15/go_rest_api/main_api/configs"
+	"github.com/MrRique15/go_rest_api/main_api/models"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
