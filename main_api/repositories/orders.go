@@ -5,8 +5,8 @@ import (
 	"errors"
 	"log"
 
-	"github.com/MrRique15/go_rest_api/main_api/models"
-	"github.com/MrRique15/go_rest_api/main_api/producers"
+	"main_api/models"
+	"main_api/producers"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

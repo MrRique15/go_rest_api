@@ -3,9 +3,9 @@ package services
 import (
 	"errors"
 
-	"github.com/MrRique15/go_rest_api/main_api/models"
-	"github.com/MrRique15/go_rest_api/main_api/repositories"
-	"github.com/MrRique15/go_rest_api/main_api/utils"
+	"main_api/models"
+	"main_api/repositories"
+	"main_api/utils"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/MrRique15/go_rest_api/main_api/configs"
-	router "github.com/MrRique15/go_rest_api/main_api/routes"
+	"main_api/configs"
+	router "main_api/routes"
 )
 
 var defaultAddress = "localhost:8080"

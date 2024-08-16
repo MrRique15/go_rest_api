@@ -3,7 +3,7 @@ package repositories
 import (
 	"errors"
 
-	"github.com/MrRique15/go_rest_api/main_api/models"
+	"main_api/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )

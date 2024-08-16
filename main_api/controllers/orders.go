@@ -3,10 +3,10 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/MrRique15/go_rest_api/main_api/models"
-	"github.com/MrRique15/go_rest_api/main_api/repositories"
-	"github.com/MrRique15/go_rest_api/main_api/responses"
-	"github.com/MrRique15/go_rest_api/main_api/services"
+	"main_api/models"
+	"main_api/repositories"
+	"main_api/responses"
+	"main_api/services"
 
 	"github.com/gin-gonic/gin"
 
@@ -108,7 +108,7 @@ func UpdateOrder(c *gin.Context) {
 
 	_, error_update := ordersService.UpdateOrder(updatingOrder)
 	if error_update != nil {
-		c.JSON(http.StatusInternalServerError, responses.OrderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &gin.H{"data": err.Error()}})
+		c.JSON(http.StatusInternalServerError, responses.OrderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &gin.H{"data": err}})
 		return
 	}
 

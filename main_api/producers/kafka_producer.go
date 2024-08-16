@@ -3,7 +3,7 @@ package producers
 import (
 	"errors"
 
-	"github.com/MrRique15/go_rest_api/main_api/configs"
+	"main_api/configs"
 
 	"github.com/IBM/sarama"
 )
