@@ -3,10 +3,10 @@ package controllers
 import (
 	"net/http"
 
-	"go_rest_api/models"
-	"go_rest_api/repositories"
-	"go_rest_api/responses"
-	"go_rest_api/services"
+	"main_api/models"
+	"main_api/repositories"
+	"main_api/responses"
+	"main_api/services"
 
 	"github.com/gin-gonic/gin"
 
@@ -17,7 +17,7 @@ import (
 
 var validate = validator.New()
 
-var usersRepository = repositories.NewUsersRepository(&repositories.MongoDBHandler{})
+var usersRepository = repositories.NewUsersRepository(&repositories.MongoDBHandlerUsers{})
 var usersService = services.NewUsersService(usersRepository)
 
 func RegisterUser(c *gin.Context) {

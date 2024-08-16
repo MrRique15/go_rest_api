@@ -3,9 +3,9 @@ package services
 import (
 	"errors"
 
-	"go_rest_api/models"
-	"go_rest_api/utils"
-	"go_rest_api/repositories"
+	"main_api/models"
+	"main_api/repositories"
+	"main_api/utils"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -30,14 +30,14 @@ func (us UsersService) RegisterUser(user models.User) (models.User, error) {
 	}
 
 	hashedPass, err := utils.GenerateHashFromPassword(user.Password)
-	if err != nil{
+	if err != nil {
 		return models.User{}, errors.New("error during password encrypt")
 	}
 
 	userToInsert := models.User{
-		ID: user.ID,
-		Name: user.Name,
-		Email: user.Email,
+		ID:       user.ID,
+		Name:     user.Name,
+		Email:    user.Email,
 		Password: hashedPass,
 	}
 
@@ -46,7 +46,7 @@ func (us UsersService) RegisterUser(user models.User) (models.User, error) {
 	return registeredUser, err
 }
 
-func (us UsersService) GetUserById(id primitive.ObjectID) (models.User, error){
+func (us UsersService) GetUserById(id primitive.ObjectID) (models.User, error) {
 	user, err := us.usersRepository.GetUserByID(id)
 
 	if err != nil {
@@ -56,10 +56,10 @@ func (us UsersService) GetUserById(id primitive.ObjectID) (models.User, error){
 	return user, nil
 }
 
-func (us UsersService) UpdateUser(user models.EditingUser) (models.User, error){
+func (us UsersService) UpdateUser(user models.EditingUser) (models.User, error) {
 	existingUser, err := us.usersRepository.GetUserByID(user.ID)
 
-	if err != nil{
+	if err != nil {
 		return models.User{}, errors.New("user not found")
 	}
 
@@ -72,16 +72,16 @@ func (us UsersService) UpdateUser(user models.EditingUser) (models.User, error){
 		return models.User{}, errors.New("invalid credentials for user update")
 	}
 
-	newHashedPass, err := utils.GenerateHashFromPassword(user.NewPassword) 
+	newHashedPass, err := utils.GenerateHashFromPassword(user.NewPassword)
 
-	if err != nil{
+	if err != nil {
 		return models.User{}, errors.New("error during password encrypt")
 	}
-	
+
 	userToUpdate := models.User{
-		ID: user.ID,
-		Name: user.Name,
-		Email: user.Email,
+		ID:       user.ID,
+		Name:     user.Name,
+		Email:    user.Email,
 		Password: newHashedPass,
 	}
 
@@ -94,10 +94,10 @@ func (us UsersService) UpdateUser(user models.EditingUser) (models.User, error){
 	return updatedUser, nil
 }
 
-func (us UsersService) LoginUser(loginObject models.UserLogin) (models.User, error){
+func (us UsersService) LoginUser(loginObject models.UserLogin) (models.User, error) {
 	existingUser, err := us.usersRepository.GetUserByEmail(loginObject.Email)
 
-	if err != nil{
+	if err != nil {
 		return models.User{}, errors.New("user not found")
 	}
 
@@ -105,7 +105,7 @@ func (us UsersService) LoginUser(loginObject models.UserLogin) (models.User, err
 	existingPass := existingUser.Password
 	error := utils.ComparePasswords(insertedPass, existingPass)
 
-	if error != nil{
+	if error != nil {
 		return models.User{}, errors.New("invalid credentials")
 	}
 

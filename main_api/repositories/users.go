@@ -2,16 +2,16 @@ package repositories
 
 import (
 	"errors"
-	"go_rest_api/models"
+	"main_api/models"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UsersRepository struct {
-	db dbHandler
+	db DBHandlerUsers
 }
 
-type dbHandler interface {
+type DBHandlerUsers interface {
 	InitiateCollection()
 	findOneEmail(email string) (models.User, error)
 	insertOne(user models.User) (models.User, error)
@@ -19,7 +19,7 @@ type dbHandler interface {
 	updateOne(id primitive.ObjectID, user models.User) (models.User, error)
 }
 
-func NewUsersRepository(dbh dbHandler) *UsersRepository {
+func NewUsersRepository(dbh DBHandlerUsers) *UsersRepository {
 	usersRepository := UsersRepository{
 		db: dbh,
 	}

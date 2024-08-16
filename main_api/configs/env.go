@@ -24,3 +24,13 @@ func EnvMongoDatabase() string {
 
     return os.Getenv("MONGODATABASE")
 }
+
+func EnvKafkaHost() string {
+    err := godotenv.Load()
+
+    if err != nil {
+        log.Fatal("Error loading .env file")
+    }
+
+    return os.Getenv("KAFKAHOST")
+}

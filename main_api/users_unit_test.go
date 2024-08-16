@@ -1,20 +1,20 @@
 package main
 
 import (
+	"main_api/models"
+	"main_api/repositories"
+	"main_api/services"
 	"testing"
-	"go_rest_api/models"
-	"go_rest_api/services"
-	"go_rest_api/repositories"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var usersRepository = repositories.NewUsersRepository(&repositories.MemoryDBHandler{})
+var usersRepository = repositories.NewUsersRepository(&repositories.MemoryDBHandlerUsers{})
 var usersService = services.NewUsersService(usersRepository)
 var originalUser = models.User{
-	Name: "test user",
-	ID: primitive.NewObjectID(),
-	Email: "teste@teste.com",
+	Name:     "test user",
+	ID:       primitive.NewObjectID(),
+	Email:    "teste@teste.com",
 	Password: "123456",
 }
 
@@ -29,7 +29,7 @@ func TestRegisterUser(t *testing.T) {
 	}
 }
 
-func TestGetUserById(t *testing.T){
+func TestGetUserById(t *testing.T) {
 	gottenUser, err := usersService.GetUserById(originalUser.ID)
 	if err != nil {
 		t.Errorf("Getting User by ID failed with reason: `%s`", err)
@@ -42,7 +42,7 @@ func TestGetUserById(t *testing.T){
 
 func TestLoginUser(t *testing.T) {
 	loginObject := models.UserLogin{
-		Email: originalUser.Email,
+		Email:    originalUser.Email,
 		Password: originalUser.Password,
 	}
 
@@ -56,11 +56,11 @@ func TestLoginUser(t *testing.T) {
 	}
 }
 
-func TestUpdateUser(t *testing.T){
+func TestUpdateUser(t *testing.T) {
 	updatingUser := models.EditingUser{
-		ID: originalUser.ID,
-		Name: "teste atualizado",
-		Email: originalUser.Email,
+		ID:          originalUser.ID,
+		Name:        "teste atualizado",
+		Email:       originalUser.Email,
 		OldPassword: originalUser.Password,
 		NewPassword: originalUser.Password,
 	}

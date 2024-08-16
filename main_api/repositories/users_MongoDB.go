@@ -1,26 +1,26 @@
 package repositories
 
 import (
-	"time"
-	"errors"
 	"context"
-	"go_rest_api/configs"
-	"go_rest_api/models"
+	"errors"
+	"main_api/configs"
+	"main_api/models"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type MongoDBHandler struct {
+type MongoDBHandlerUsers struct {
 	userCollection *mongo.Collection
 }
 
-func (dbh *MongoDBHandler) InitiateCollection() {
-	dbh.userCollection = configs.GetCollection(configs.DB, "users")
+func (dbh *MongoDBHandlerUsers) InitiateCollection() {
+	dbh.userCollection = configs.GetCollection(configs.MongoDB, "users")
 }
 
-func (dbh MongoDBHandler) findOneID(id primitive.ObjectID) (models.User, error) {
+func (dbh MongoDBHandlerUsers) findOneID(id primitive.ObjectID) (models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -34,7 +34,7 @@ func (dbh MongoDBHandler) findOneID(id primitive.ObjectID) (models.User, error) 
 	return user, nil
 }
 
-func (dbh MongoDBHandler) findOneEmail(email string) (models.User, error) {
+func (dbh MongoDBHandlerUsers) findOneEmail(email string) (models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -48,7 +48,7 @@ func (dbh MongoDBHandler) findOneEmail(email string) (models.User, error) {
 	return user, nil
 }
 
-func (dbh MongoDBHandler) insertOne(user models.User) (models.User, error) {
+func (dbh MongoDBHandlerUsers) insertOne(user models.User) (models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -61,7 +61,7 @@ func (dbh MongoDBHandler) insertOne(user models.User) (models.User, error) {
 	return dbh.findOneID(user.ID)
 }
 
-func (dbh MongoDBHandler) updateOne(id primitive.ObjectID, user models.User) (models.User, error) {
+func (dbh MongoDBHandlerUsers) updateOne(id primitive.ObjectID, user models.User) (models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

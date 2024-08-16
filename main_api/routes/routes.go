@@ -4,8 +4,9 @@ import (
 	"errors"
 	"strings"
 
+	"main_api/controllers"
+
 	"github.com/gin-gonic/gin"
-	"go_rest_api/controllers"
 )
 
 type RouterType *gin.Engine
@@ -20,6 +21,11 @@ func UsersRouter(router *gin.Engine) {
 	router.GET("/users/:id", controllers.GetUserByID)
 	router.POST("/users/register", controllers.RegisterUser)
 	router.POST("/users/login", controllers.LoginUser)
+}
+
+func OrdersRouter(router *gin.Engine) {
+	router.POST("/orders/new", controllers.NewOrder)
+	router.PUT("/orders/update", controllers.UpdateOrder)
 }
 
 func RunRouter(router *gin.Engine, addr string) error {

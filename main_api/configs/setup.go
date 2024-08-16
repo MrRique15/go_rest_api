@@ -9,7 +9,7 @@ import (
     "go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func ConnectDB() *mongo.Client  {
+func ConnectMongoDB() *mongo.Client  {
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer cancel()
 
@@ -27,8 +27,13 @@ func ConnectDB() *mongo.Client  {
     return client
 }
 
+
+func ConnectPrismaDB() {
+    fmt.Println("Connected to PrismaDB")
+}
+
 //Client instance
-var DB *mongo.Client = ConnectDB()
+var MongoDB *mongo.Client = ConnectMongoDB()
 
 //getting database collections
 func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {
