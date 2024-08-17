@@ -3,6 +3,8 @@ package consumers
 import (
 	"fmt"
 	"log"
+	"stock_service/order_operations"
+	"stock_service/utils"
 
 	"github.com/IBM/sarama"
 )
@@ -15,7 +17,7 @@ func OrdersConsumer(consumer sarama.Consumer) {
 		partition := int32(0)
 
 		// Start reading messages
-		partitionConsumer, err := consumer.ConsumePartition(topic, partition, sarama.OffsetOldest)
+		partitionConsumer, err := consumer.ConsumePartition(topic, partition, sarama.OffsetNewest)
 		if err != nil {
 			log.Fatalf("Error consuming partition: %v", err)
 		}
@@ -23,7 +25,7 @@ func OrdersConsumer(consumer sarama.Consumer) {
 		// Loop to listen to messages
 		fmt.Println("Listening to messages...")
 		for msg := range partitionConsumer.Messages() {
-			fmt.Printf("Received: %s\n", string(msg.Value))
+			order_operations.ProcessOrder(utils.ByteToInterface(msg.Value))
 		}
 	}
 }

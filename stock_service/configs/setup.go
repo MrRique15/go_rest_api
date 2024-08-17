@@ -27,11 +27,6 @@ func ConnectMongoDB() *mongo.Client  {
     return client
 }
 
-
-func ConnectPrismaDB() {
-    fmt.Println("Connected to PrismaDB")
-}
-
 //Client instance
 var MongoDB *mongo.Client = ConnectMongoDB()
 

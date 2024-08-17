@@ -1,15 +1,16 @@
 package main
 
 import (
-    "log"
+	"log"
 
-	"payment_service/configs"
-	"payment_service/consumers"
+	"stock_service/configs"
+	"stock_service/consumers"
 )
 
 func main() {
-    
+
 	order_consumer, err := configs.ConnectKafka()
+	configs.ConnectMongoDB()
 
 	if err != nil {
 		log.Fatalf("Erro ao criar consumidor: %v", err)

@@ -100,7 +100,7 @@ func EditUser(c *gin.Context) {
 
 	_, error := usersService.UpdateUser(user)
 	if error != nil {
-		c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &gin.H{"data": err.Error()}})
+		c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &gin.H{"data": error.Error()}})
 		return
 	}
 

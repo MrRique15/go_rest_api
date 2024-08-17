@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"main_api/models"
@@ -62,9 +61,6 @@ func NewOrder(c *gin.Context) {
 		return
 	}
 
-	//print result in JSON format with keys and values
-	fmt.Printf("%+v\n", result)
-
 	c.JSON(http.StatusCreated, responses.OrderResponse{Status: http.StatusCreated, Message: "success", Data: &gin.H{"data": result}})
 }
 
@@ -84,7 +80,7 @@ func UpdateOrder(c *gin.Context) {
 	order_id, error := primitive.ObjectIDFromHex(order.ID)
 
 	if error != nil {
-		c.JSON(http.StatusBadRequest, responses.OrderResponse{Status: http.StatusBadRequest, Message: "error", Data: &gin.H{"data": "invalid customer_id"}})
+		c.JSON(http.StatusBadRequest, responses.OrderResponse{Status: http.StatusBadRequest, Message: "error", Data: &gin.H{"data": "invalid _id"}})
 		return
 	}
 

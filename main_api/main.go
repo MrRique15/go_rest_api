@@ -13,10 +13,10 @@ func main() {
 	mainRouter := router.InitMainRouter()
 
 	configs.ConnectMongoDB()
-	configs.ConnectPrismaDB()
 
 	router.UsersRouter(mainRouter)
 	router.OrdersRouter(mainRouter)
+	router.ProductsRouter(mainRouter)
 
 	if err := router.RunRouter(mainRouter, defaultAddress); err != nil {
 		fmt.Println("Internal Server Error, Exiting API")

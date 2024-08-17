@@ -1,4 +1,4 @@
-module payment_service
+module stock_service
 
 go 1.22.6
 

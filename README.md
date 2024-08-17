@@ -32,11 +32,7 @@ To run this project, you need to have Go installed on your machine. You can down
    go mod tidy
    ```
    ```bash
-   cd payment_service
-   go mod tidy
-   ```
-   ```bash
-   cd notification_service
+   cd stock_service
    go mod tidy
    ```
 
@@ -53,228 +49,7 @@ The server will start on `http://localhost:8080`.
 
 ## API Endpoints
 
-### POST /users/register
-
-- **Description**: Register a new user in the system.
-- **Request Body**: 
-  - Example:
-    ```json
-    {
-	    "name": "string",
-	    "email": "string",
-	    "password": "string",
-	    "confirm_password": "string"
-    }
-    ```
-- **Response**: 
-  - Status: `201 Created`
-  - Body:
-    ```json
-    {
-	    "status": 201,
-	    "message": "success",
-	    "data": {
-	    	"data": {
-	    		"id": "ObjectID",
-          "name": "string",
-          "email": "string",
-          "password": "string"
-	    	}
-	    }
-    }
-    ```
-
-### POST /users/login
-
-- **Description**: Login a user in the system.
-- **Request Body**: 
-  - Example:
-    ```json
-    {
-	    "email": "string",
-	    "password": "string"
-    }
-    ```
-- **Response**: 
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-	    "status": 200,
-	    "message": "sucess",
-	    "data": {
-	    	"data": {
-	    		"id": "ObjectID",
-	    		"name": "string",
-	    		"email": "string"
-	    	}
-	    }
-    }
-    ```
-
-### PUT /users/edit/:id
-
-- **Description**: Edit an existing user.
-- **Request Body**: 
-  - Example:
-    ```json
-    {
-	    "id": "ObjectID",
-	    "name": "string",
-	    "email": "string",
-	    "old_password": "string",
-	    "new_password": "string"
-    }
-    ```
-- **Response**: 
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-	    "status": 200,
-	    "message": "success",
-	    "data": {
-	    	"data": {
-	    		"id": "ObjectID",
-	    		"name": "string",
-	    		"email": "string"
-	    	}
-	    }
-    }
-    ```
-
-### GET /users/:id
-
-- **Description**: Get an user by ID.
-- **Response**: 
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-	    "status": 200,
-	    "message": "success",
-	    "data": {
-	    	"data": {
-	    		"id": "ObjectID",
-	    		"name": "string",
-	    		"email": "string"
-	    	}
-	    }
-    }
-    ```
-
-  ### POST /users/register
-
-- **Description**: Register a new user in the system.
-- **Request Body**: 
-  - Example:
-    ```json
-    {
-	    "name": "string",
-	    "email": "string",
-	    "password": "string",
-	    "confirm_password": "string"
-    }
-    ```
-- **Response**: 
-  - Status: `201 Created`
-  - Body:
-    ```json
-    {
-	    "status": 201,
-	    "message": "success",
-	    "data": {
-	    	"data": {
-	    		"InsertedID": "ObjectID"
-	    	}
-	    }
-    }
-    ```
-
-### POST /orders/new
-
-- **Description**: Register a new order in the system and stream an event to Kafka.
-- **Request Body**: 
-  - Example:
-    ```json
-    {
-      "customer_id": "ObjectID",
-      "price": "float",
-      "items": [
-        {
-          "product_id": "ObjectID",
-          "quantity": "int"
-        }
-      ],
-      "status": "string"
-    }
-    ```
-- **Response**: 
-  - Status: `201 Created`
-  - Body:
-    ```json
-    {
-	    "status": 201,
-	    "message": "success",
-	    "data": {
-	    	"data": {
-          "id": "ObjectID",
-          "customer_id": "ObjectID",
-          "price": "float",
-          "items": [
-            {
-              "product_id": "ObjectID",
-              "quantity": "int"
-            }
-          ],
-          "status": "string"
-	    	}
-	    }
-    }
-    ```
-
-### PUT /orders/update
-
-- **Description**: Update an existing order in the system and stream an event to Kafka.
-- **Request Body**: 
-  - Example:
-    ```json
-    {
-      "id": "ObjectID",
-      "customer_id": "ObjectID",
-      "price": "float",
-      "items": [
-        {
-          "product_id": "ObjectID",
-          "quantity": "int"
-        }
-      ],
-      "status": "string"
-    }
-    ```
-- **Response**: 
-  - Status: `200 OK`
-  - Body:
-    ```json
-    {
-	    "status": 201,
-	    "message": "success",
-	    "data": {
-	    	"data": {
-          "id": "ObjectID",
-          "customer_id": "ObjectID",
-          "price": "float",
-          "items": [
-            {
-              "product_id": "ObjectID",
-              "quantity": "int"
-            }
-          ],
-          "status": "string"
-	    	}
-	    }
-    }
-    ```
+To check the API endpoints, you can access the [routes documentation](routes_doc/README.md).
 
 ## Running the Application
 
@@ -314,23 +89,13 @@ cd kafka
 ./create_topics.sh
 ```
 
-## Running Payment Service
+## Running Stock Service
 
-The payment service will watch for new order by consuming the `order` topic from kafka and then it will send a payment event to the `payment` topic.
-To run the payment service, execute the following command:
-
-```bash
-cd payment_service
-go run main.go
-```
-
-## Running Notifications Service
-
-The notifications service will watch for new payment entries by consuming the `payment` topic from kafka and then it will send an email notification for customer.
-To run the notifications service, execute the following command:
+The stock service will watch for new orders by consuming the `order` topic from kafka and then it will update items stock and order status.
+To run the stock service, execute the following command:
 
 ```bash
-cd notifications_service
+cd stock_service
 go run main.go
 ```
 

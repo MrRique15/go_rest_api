@@ -28,6 +28,11 @@ func OrdersRouter(router *gin.Engine) {
 	router.PUT("/orders/update", controllers.UpdateOrder)
 }
 
+func ProductsRouter(router *gin.Engine) {
+	router.POST("/products/new", controllers.NewProduct)
+	router.PUT("/products/update", controllers.UpdateProduct)
+}
+
 func RunRouter(router *gin.Engine, addr string) error {
 	addressArray := strings.Split(addr, ":")
 
