@@ -54,6 +54,7 @@ func (us UsersRepository) GetUserByID(id primitive.ObjectID) (models.User, error
 func (us UsersRepository) RegisterUser(newUser models.User) (models.User, error) {
 	user, err := us.db.insertOne(newUser)
 
+
 	if err != nil {
 		return user, errors.New("error during user registration")
 	}

@@ -34,7 +34,7 @@ func NewOrdersRepository(dbh DBHandlerOrders) *OrdersRepository {
 	return &OrdersRepository
 }
 
-func orderToJson(order models.Order) (string, error) {
+func orderToJson(order models.KafkaOrderEvent) (string, error) {
 	jsonOrder, error := json.Marshal(order)
 
 	if error != nil {
@@ -62,7 +62,12 @@ func (os OrdersRepository) RegisterOrder(newOrder models.Order) (models.Order, e
 		return models.Order{}, errors.New("error during order registration")
 	}
 
-	stringOrder, error := orderToJson(order)
+	var OrderEvent = models.KafkaOrderEvent{
+		Order: order,
+		Event: "order.event.created",
+	}
+
+	stringOrder, error := orderToJson(OrderEvent)
 
 	if error != nil {
 		log.Println("error during order transformation for kafka event")

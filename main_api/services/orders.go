@@ -30,7 +30,7 @@ func (os OrdersService) RegisterOrder(order models.Order) (models.Order, error) 
 
 	orderToInsert := models.Order{
 		ID:       order.ID,
-		ClientID: order.ClientID,
+		CustomerID: order.CustomerID,
 		Price:    order.Price,
 		Items:    order.Items,
 		Status:   order.Status,
@@ -50,7 +50,7 @@ func (os OrdersService) UpdateOrder(order models.Order) (models.Order, error) {
 
 	orderToUpdate := models.Order{
 		ID:       order.ID,
-		ClientID: order.ClientID,
+		CustomerID: order.CustomerID,
 		Price:    order.Price,
 		Items:    order.Items,
 		Status:   order.Status,

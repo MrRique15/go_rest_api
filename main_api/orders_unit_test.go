@@ -22,7 +22,7 @@ var originalCustomer = models.User{
 
 var originalOrder = models.Order{
 	ID:       primitive.NewObjectID(),
-	ClientID: originalCustomer.ID,
+	CustomerID: originalCustomer.ID,
 	Price:    100.0,
 	Items: []models.Item{
 		{
@@ -67,7 +67,7 @@ func TestGetOrderByID(t *testing.T) {
 func TestUpdateOrder(t *testing.T) {
 	updatingOrder := models.Order{
 		ID:       originalOrder.ID,
-		ClientID: originalOrder.ClientID,
+		CustomerID: originalOrder.CustomerID,
 		Price:    200.0,
 		Items: []models.Item{
 			{

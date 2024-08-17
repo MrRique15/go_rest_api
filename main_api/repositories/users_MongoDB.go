@@ -26,7 +26,7 @@ func (dbh MongoDBHandlerUsers) findOneID(id primitive.ObjectID) (models.User, er
 	defer cancel()
 
 	var user models.User
-	err := dbh.userCollection.FindOne(ctx, bson.M{"id": id}).Decode(&user)
+	err := dbh.userCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&user)
 
 	if err != nil {
 		return models.User{}, errors.New("user not found")
@@ -53,13 +53,13 @@ func (dbh MongoDBHandlerUsers) insertOne(user models.User) (models.User, error) 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	_, err := dbh.userCollection.InsertOne(ctx, user)
+	_, err := dbh.userCollection.InsertOne(ctx, bson.M{"name": user.Name, "email": user.Email, "password": user.Password})
 
 	if err != nil {
 		return models.User{}, errors.New("error during user registration")
 	}
 
-	return dbh.findOneID(user.ID)
+	return dbh.findOneEmail(user.Email)
 }
 
 func (dbh MongoDBHandlerUsers) updateOne(id primitive.ObjectID, user models.User) (models.User, error) {
@@ -68,7 +68,7 @@ func (dbh MongoDBHandlerUsers) updateOne(id primitive.ObjectID, user models.User
 
 	update := bson.M{"name": user.Name, "email": user.Email, "password": user.Password}
 
-	_, err := dbh.userCollection.UpdateOne(ctx, bson.M{"id": user.ID}, bson.M{"$set": update})
+	_, err := dbh.userCollection.UpdateOne(ctx, bson.M{"_id": user.ID}, bson.M{"$set": update})
 
 	if err != nil {
 		return user, errors.New("error during user update")

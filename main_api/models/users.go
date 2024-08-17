@@ -3,7 +3,7 @@ package models
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type User struct {
-    ID       primitive.ObjectID `json:"id"`
+    ID       primitive.ObjectID `bson:"_id" json:"_id"`
     Name     string             `json:"name" validate:"required"`
     Email    string             `json:"email" validate:"required"`
     Password string             `json:"password" validate:"required"`
@@ -22,13 +22,13 @@ type UserLogin struct {
 }
 
 type ReturnedUser struct {
-    ID       primitive.ObjectID `json:"id"`
+    ID       primitive.ObjectID `json:"_id"`
     Name     string             `json:"name" validate:"required"`
     Email    string             `json:"email" validate:"required"`
 }
 
 type EditingUser struct {
-    ID          primitive.ObjectID `json:"id"`
+    ID          primitive.ObjectID `json:"_id"`
     Name        string             `json:"name" validate:"required"`
     Email       string             `json:"email" validate:"required"`
     OldPassword string             `json:"old_password" validate:"required"`

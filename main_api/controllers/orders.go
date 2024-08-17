@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"main_api/models"
@@ -33,14 +34,14 @@ func NewOrder(c *gin.Context) {
 		return
 	}
 
-	client_id, err := primitive.ObjectIDFromHex(order.ClientID)
+	customer_id, err := primitive.ObjectIDFromHex(order.CustomerID)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, responses.OrderResponse{Status: http.StatusBadRequest, Message: "error", Data: &gin.H{"data": "invalid client_id"}})
+		c.JSON(http.StatusBadRequest, responses.OrderResponse{Status: http.StatusBadRequest, Message: "error", Data: &gin.H{"data": "invalid customer_id"}})
 		return
 	}
 
-	_, error := usersService.GetUserById(client_id)
+	_, error := usersService.GetUserById(customer_id)
 
 	if error != nil {
 		c.JSON(http.StatusBadRequest, responses.OrderResponse{Status: http.StatusBadRequest, Message: "error", Data: &gin.H{"data": "customer not found"}})
@@ -49,7 +50,7 @@ func NewOrder(c *gin.Context) {
 
 	newOrder := models.Order{
 		ID:       primitive.NewObjectID(),
-		ClientID: client_id,
+		CustomerID: customer_id,
 		Price:    order.Price,
 		Items:    order.Items,
 		Status:   order.Status,
@@ -60,6 +61,9 @@ func NewOrder(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, responses.OrderResponse{Status: http.StatusInternalServerError, Message: "error", Data: &gin.H{"data": err.Error()}})
 		return
 	}
+
+	//print result in JSON format with keys and values
+	fmt.Printf("%+v\n", result)
 
 	c.JSON(http.StatusCreated, responses.OrderResponse{Status: http.StatusCreated, Message: "success", Data: &gin.H{"data": result}})
 }
@@ -80,18 +84,18 @@ func UpdateOrder(c *gin.Context) {
 	order_id, error := primitive.ObjectIDFromHex(order.ID)
 
 	if error != nil {
-		c.JSON(http.StatusBadRequest, responses.OrderResponse{Status: http.StatusBadRequest, Message: "error", Data: &gin.H{"data": "invalid client_id"}})
+		c.JSON(http.StatusBadRequest, responses.OrderResponse{Status: http.StatusBadRequest, Message: "error", Data: &gin.H{"data": "invalid customer_id"}})
 		return
 	}
 
-	client_id, err := primitive.ObjectIDFromHex(order.ClientID)
+	customer_id, err := primitive.ObjectIDFromHex(order.CustomerID)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, responses.OrderResponse{Status: http.StatusBadRequest, Message: "error", Data: &gin.H{"data": "invalid client_id"}})
+		c.JSON(http.StatusBadRequest, responses.OrderResponse{Status: http.StatusBadRequest, Message: "error", Data: &gin.H{"data": "invalid customer_id"}})
 		return
 	}
 
-	_, error_customer := usersService.GetUserById(client_id)
+	_, error_customer := usersService.GetUserById(customer_id)
 
 	if error_customer != nil {
 		c.JSON(http.StatusBadRequest, responses.OrderResponse{Status: http.StatusBadRequest, Message: "error", Data: &gin.H{"data": "customer not found"}})
@@ -100,7 +104,7 @@ func UpdateOrder(c *gin.Context) {
 
 	updatingOrder := models.Order{
 		ID:       order_id,
-		ClientID: client_id,
+		CustomerID: customer_id,
 		Price:    order.Price,
 		Items:    order.Items,
 		Status:   order.Status,
@@ -121,7 +125,7 @@ func UpdateOrder(c *gin.Context) {
 
 	result := models.Order{
 		ID:       gottenOrder.ID,
-		ClientID: gottenOrder.ClientID,
+		CustomerID: gottenOrder.CustomerID,
 		Price:    gottenOrder.Price,
 		Items:    gottenOrder.Items,
 		Status:   gottenOrder.Status,

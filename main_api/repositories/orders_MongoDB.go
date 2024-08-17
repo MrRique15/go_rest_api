@@ -26,7 +26,7 @@ func (dbh MongoDBHandlerOrders) getOrderById(id primitive.ObjectID) (models.Orde
 	defer cancel()
 
 	var order models.Order
-	err := dbh.ordersCollection.FindOne(ctx, bson.M{"id": id}).Decode(&order)
+	err := dbh.ordersCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&order)
 
 	if err != nil {
 		return models.Order{}, errors.New("order not found")
@@ -53,13 +53,13 @@ func (dbh MongoDBHandlerOrders) updateOrder(id primitive.ObjectID, order models.
 	defer cancel()
 
 	update := bson.M{
-		"client_id": order.ClientID,
+		"customer_id": order.CustomerID,
 		"price":     order.Price,
 		"items":     order.Items,
 		"status":    order.Status,
 	}
 
-	_, err := dbh.ordersCollection.UpdateOne(ctx, bson.M{"id": order.ID}, bson.M{"$set": update})
+	_, err := dbh.ordersCollection.UpdateOne(ctx, bson.M{"_id": order.ID}, bson.M{"$set": update})
 
 	if err != nil {
 		return models.Order{}, errors.New("error during order update")

@@ -91,15 +91,15 @@ func EditUser(c *gin.Context) {
 		return
 	}
 
-	_, err := usersService.UpdateUser(user)
+	gottenUser, err := usersService.GetUserById(objId)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &gin.H{"data": err.Error()}})
 		return
 	}
 
-	gottenUser, err := usersService.GetUserById(objId)
-
-	if err != nil {
+	_, error := usersService.UpdateUser(user)
+	if error != nil {
 		c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &gin.H{"data": err.Error()}})
 		return
 	}

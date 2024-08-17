@@ -198,7 +198,7 @@ The server will start on `http://localhost:8080`.
   - Example:
     ```json
     {
-      "client_id": "ObjectID",
+      "customer_id": "ObjectID",
       "price": "float",
       "items": [
         {
@@ -219,7 +219,7 @@ The server will start on `http://localhost:8080`.
 	    "data": {
 	    	"data": {
           "id": "ObjectID",
-          "client_id": "ObjectID",
+          "customer_id": "ObjectID",
           "price": "float",
           "items": [
             {
@@ -241,7 +241,7 @@ The server will start on `http://localhost:8080`.
     ```json
     {
       "id": "ObjectID",
-      "client_id": "ObjectID",
+      "customer_id": "ObjectID",
       "price": "float",
       "items": [
         {
@@ -262,7 +262,7 @@ The server will start on `http://localhost:8080`.
 	    "data": {
 	    	"data": {
           "id": "ObjectID",
-          "client_id": "ObjectID",
+          "customer_id": "ObjectID",
           "price": "float",
           "items": [
             {

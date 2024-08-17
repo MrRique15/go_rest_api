@@ -26,7 +26,7 @@ func NewKafkaProducer() *KafkaProducer {
 	return &kafkaRepository
 }
 
-func (kr KafkaProducer) SendKafkaEvent(topic string, message string) error {
+func (kr *KafkaProducer) SendKafkaEvent(topic string, message string) error {
 	msg := &sarama.ProducerMessage{
 		Topic: topic,
 		Value: sarama.StringEncoder(message),

@@ -17,7 +17,7 @@ func ConnectKafka() (sarama.Consumer, error) {
     if err != nil {
         log.Fatalf("Erro ao criar consumidor: %v", err)
     }
-    defer consumer.Close()
+    // defer consumer.Close()
 
 	fmt.Println("Conectado ao Kafka")
 	return consumer, nil
