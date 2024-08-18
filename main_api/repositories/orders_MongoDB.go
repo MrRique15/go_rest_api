@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
-	"main_api/configs"
-	"main_api/models"
-
+	"github.com/MrRique15/go_rest_api/main_api/env"
+	"github.com/MrRique15/go_rest_api/pkg/shared/models"
+	"github.com/MrRique15/go_rest_api/pkg/shared/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,7 +18,7 @@ type MongoDBHandlerOrders struct {
 }
 
 func (dbh *MongoDBHandlerOrders) InitiateCollection() {
-	dbh.ordersCollection = configs.GetCollection(configs.MongoDB, "orders")
+	dbh.ordersCollection = mongodb.GetCollection(&MongoDB, "orders", env.EnvMongoDatabase())
 }
 
 func (dbh MongoDBHandlerOrders) getOrderById(id primitive.ObjectID) (models.Order, error) {

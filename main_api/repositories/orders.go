@@ -4,14 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-
-	"main_api/models"
-	"main_api/producers"
-
+	"github.com/MrRique15/go_rest_api/pkg/shared/models"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
-var kafkaProducer = producers.NewKafkaProducer()
 
 type OrdersRepository struct {
 	db DBHandlerOrders
@@ -75,7 +70,7 @@ func (os OrdersRepository) RegisterOrder(newOrder models.Order) (models.Order, e
 
 	// send kafka event
 	if error == nil {
-		kafkaProducer.SendKafkaEvent("order", stringOrder)
+		KafkaProducer.SendKafkaEvent("order", stringOrder)
 	}
 
 	return order, nil

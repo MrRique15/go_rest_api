@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
-	"main_api/configs"
-	"main_api/models"
-
+	"github.com/MrRique15/go_rest_api/main_api/env"
+	"github.com/MrRique15/go_rest_api/pkg/shared/models"
+	"github.com/MrRique15/go_rest_api/pkg/shared/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,7 +18,7 @@ type MongoDBHandlerProducts struct {
 }
 
 func (dbh *MongoDBHandlerProducts) InitiateCollection() {
-	dbh.productsCollection = configs.GetCollection(configs.MongoDB, "products")
+	dbh.productsCollection = mongodb.GetCollection(&MongoDB, "products", env.EnvMongoDatabase())
 }
 
 func (dbh MongoDBHandlerProducts) getProductById(id primitive.ObjectID) (models.Product, error) {

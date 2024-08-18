@@ -3,21 +3,18 @@ package consumers
 import (
 	"fmt"
 	"log"
-	"stock_service/order_operations"
-	"stock_service/utils"
 
 	"github.com/IBM/sarama"
+	"github.com/MrRique15/go_rest_api/inventory_service/inventory_operations"
+	"github.com/MrRique15/go_rest_api/pkg/utils"
 )
 
-func OrdersConsumer(consumer sarama.Consumer) {
+func OrdersConsumer(consumer sarama.Consumer, topic string, offset int64) {
 	// create a consumer, conect to kafka topic and stay listening for messages
 	for {
-		// Choose the topic and partition
-		topic := "order"
 		partition := int32(0)
 
-		// Start reading messages
-		partitionConsumer, err := consumer.ConsumePartition(topic, partition, sarama.OffsetNewest)
+		partitionConsumer, err := consumer.ConsumePartition(topic, partition, offset)
 		if err != nil {
 			log.Fatalf("Error consuming partition: %v", err)
 		}
@@ -25,7 +22,7 @@ func OrdersConsumer(consumer sarama.Consumer) {
 		// Loop to listen to messages
 		fmt.Println("Listening to messages...")
 		for msg := range partitionConsumer.Messages() {
-			order_operations.ProcessOrder(utils.ByteToInterface(msg.Value))
+			inventory_operations.ProcessOrder(utils.ByteToInterface(msg.Value))
 		}
 	}
 }

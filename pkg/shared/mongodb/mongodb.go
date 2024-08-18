@@ -1,4 +1,4 @@
-package configs
+package mongodb
 
 import (
     "fmt"
@@ -9,11 +9,11 @@ import (
     "go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func ConnectMongoDB() *mongo.Client  {
+func ConnectMongoDB(uri string) *mongo.Client  {
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer cancel()
 
-    client, err := mongo.Connect(ctx, options.Client().ApplyURI(EnvMongoURI()))
+    client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	
     if err != nil {
         log.Fatal(err)
@@ -27,11 +27,7 @@ func ConnectMongoDB() *mongo.Client  {
     return client
 }
 
-//Client instance
-var MongoDB *mongo.Client = ConnectMongoDB()
-
-//getting database collections
-func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {
-    collection := client.Database(EnvMongoDatabase()).Collection(collectionName)
+func GetCollection(client *mongo.Client, collectionName string, dataBase string) *mongo.Collection {
+    collection := client.Database(dataBase).Collection(collectionName)
     return collection
 }

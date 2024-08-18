@@ -1,10 +1,18 @@
 package utils
 
 import (
+	"encoding/json"
 	"errors"
 
+	"github.com/MrRique15/go_rest_api/pkg/shared/models"
 	"golang.org/x/crypto/bcrypt"
 )
+
+func ByteToInterface(data []byte) models.KafkaOrderEvent {
+	var event models.KafkaOrderEvent
+	json.Unmarshal(data, &event)
+	return event
+}
 
 func GenerateHashFromPassword(password string) (string, error){
 	pass := []byte(password)

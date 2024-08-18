@@ -5,9 +5,9 @@ import (
 	"errors"
 	"time"
 
-	"main_api/configs"
-	"main_api/models"
-
+	"github.com/MrRique15/go_rest_api/main_api/env"
+	"github.com/MrRique15/go_rest_api/pkg/shared/models"
+	"github.com/MrRique15/go_rest_api/pkg/shared/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,7 +18,7 @@ type MongoDBHandlerUsers struct {
 }
 
 func (dbh *MongoDBHandlerUsers) InitiateCollection() {
-	dbh.userCollection = configs.GetCollection(configs.MongoDB, "users")
+	dbh.userCollection = mongodb.GetCollection(&MongoDB, "users", env.EnvMongoDatabase())
 }
 
 func (dbh MongoDBHandlerUsers) findOneID(id primitive.ObjectID) (models.User, error) {

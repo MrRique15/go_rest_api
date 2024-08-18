@@ -1,9 +1,11 @@
-package order_operations
+package inventory_operations
 
 import (
+	"errors"
 	"fmt"
-	repositories "stock_service/data_base"
-	"stock_service/models"
+
+	"github.com/MrRique15/go_rest_api/main_api/repositories"
+	"github.com/MrRique15/go_rest_api/pkg/shared/models"
 )
 
 var prodcutsRepository = repositories.NewProductsRepository(&repositories.MongoDBHandlerProducts{})
@@ -13,6 +15,10 @@ func RemoveStock(item models.Item) error {
 
 	if err != nil {
 		return err
+	}
+
+	if existingItem.Stock < item.Quantity {
+		return errors.New("insufficient stock for item: " + existingItem.Name)
 	}
 
 	existingItem.Stock -= item.Quantity
@@ -37,10 +43,11 @@ func ProcessOrder(completeEvent models.KafkaOrderEvent) {
 
 			if err != nil {
 				fmt.Println("Error removing stock for item: ", item)
+				// TODO: Add rollback event for order in SAGA pattern
 			}
 		}
 
-		// TODO: Add payment processing status for order
+		// TODO: Add event for order processed in SAGA pattern
 
 	case "order.event.updated":
 
