@@ -24,5 +24,5 @@ func main() {
 		log.Fatalf("Erro ao criar consumidor: %v", err)
 	}
 
-	consumers.OrdersConsumer(order_consumer, "validate_inventory", sarama.OffsetNewest)
+	consumers.OrdersConsumer(order_consumer, "inventory", sarama.OffsetNewest)
 }
