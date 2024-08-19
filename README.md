@@ -5,10 +5,14 @@ This is an API built with the Go programming language, the Gin web framework and
 ## Table of Contents
 
 - [Installation](#installation)
+- [SAGA Pattern](#saga-pattern)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
-- [Running the Application](#running-the-application)
-- [Building the Application](#building-the-application)
+- [Testing the Application](#testing-the-application)
+- [Running Kafka and Zookeeper with Docker](#running-kafka-and-zookeeper-with-docker)
+- [Running Saga Execution Controller](#running-saga-execution-controller)
+- [Running Inventory Service](#running-inventory-service)
+- [Building the API Gateway](#building-the-api-gateway)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -74,19 +78,18 @@ cd kafka
 docker-compose up
 ```
 
-## Configuring Kafka Topics
-
-To create the necessary topics for the application automaticaly, execute the following command:
+## Running Saga Execution Controller
+The Saga Execution Controller will watch for new events by consuming the `order_sec` topic from kafka, triggered by the API Gateway and servicer. It will control the sequence of events to complete order processing or cancelation.
 
 ```bash
-cd kafka
-./create_topics.sh
+cd saga_execution_controller
+go run main.go
 ```
 
 ## Running Inventory Service
 
-The inventory service will watch for new orders by consuming the `inventory` topic from kafka, triggered by Saga Execution Controller and then it will update items stock and order status.
-If the item is out of stock, it will send a message to the Saga Execution Controller to cancel the order, using the `inventory` topic.
+The inventory service will watch for new events by consuming the `inventory` topic from kafka, triggered by Saga Execution Controller and then it will update items inventory and order status.
+If the item is out of stock, it will send a message to the Saga Execution Controller informing the order cancelation, using the `order_sec` topic.
 On the other hand, if the item is in stock, it will send a message to the Saga Execution Controller to proceed with the order, using the `inventory` topic.
 
 ```bash
