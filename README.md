@@ -14,6 +14,7 @@ This is an API built with the Go programming language, the Gin web framework and
    - [Running Saga Execution Controller](#running-saga-execution-controller)
    - [Running Inventory Service](#running-inventory-service)
    - [Running Payment Service](#running-payment-service)
+   - [Running Shipping Service](#running-shipping-service)
 - [Building the API Gateway](#building-the-api-gateway)
 - [Contributing](#contributing)
 - [License](#license)
@@ -95,7 +96,7 @@ go run main.go
 
 The inventory service will watch for new events by consuming the `inventory` topic from kafka, triggered by Saga Execution Controller and then it will update items inventory and order status.
 If the item is out of stock, it will send a message to the Saga Execution Controller informing the order cancelation, using the `order_sec` topic.
-On the other hand, if the item is in stock, it will send a message to the Saga Execution Controller to proceed with the order, using the `inventory` topic.
+On the other hand, if the item is in stock, it will send a message to the Saga Execution Controller to proceed with the order, using the `order_sec` topic.
 
 ```bash
 cd inventory_service
@@ -106,10 +107,21 @@ go run main.go
 
 The payment service will watch for new events by consuming the `payment` topic from kafka, triggered by Saga Execution Controller and then it will update order status when payment is completed.
 If the order isn't reserved in inventory or the payment is not completed, it will send a message to the Saga Execution Controller informing the problem, using the `order_sec` topic.
-On the other hand, it's all checked, it will send a message to the Saga Execution Controller to proceed with the order, using the `payment` topic.
+On the other hand, if it's all checked, it will send a message to the Saga Execution Controller to proceed with the order, using the `order_sec` topic.
 
 ```bash
 cd payment_service
+go run main.go
+```
+
+### Running Shipping Service
+
+The shipping service will watch for new events by consuming the `shipping` topic from kafka, triggered by Saga Execution Controller and then it will update order status when shipping is started.
+If the order isn't paid, it will send a message to the Saga Execution Controller informing the problem, using the `order_sec` topic.
+On the other hand, if it's all checked, it will send a message to the Saga Execution Controller to proceed with the order, using the `order_sec` topic.
+
+```bash
+cd shipping_service
 go run main.go
 ```
 

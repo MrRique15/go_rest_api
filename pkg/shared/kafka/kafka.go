@@ -28,6 +28,11 @@ var OrdersSEC_KafkaEvents = []string{
 	"event.payment.rollback_failed",          // 6
 	"event.payment.rollback_success",         // 7
 	"event.payment.verify_succeeded",         // 8
+
+	"event.shipping.start_failed",            // 9
+	"event.shipping.start_succeeded",         // 10
+	"event.shipping.rollback_failed",         // 11
+	"event.shipping.rollback_succeeded",      // 12
 }
 
 var Inventory_KafkaEvents = []string{
@@ -38,6 +43,11 @@ var Inventory_KafkaEvents = []string{
 var Payment_KafkaEvents = []string{
 	"event.payment.verify",
 	"event.payment.rollback",
+}
+
+var Shipping_KafkaEvents = []string{
+	"event.shipping.start",
+	"event.shipping.rollback",
 }
 
 func StartKafkaProducer(kafka_host string) (*sarama.SyncProducer, error) {
