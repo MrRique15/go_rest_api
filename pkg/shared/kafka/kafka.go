@@ -17,16 +17,27 @@ var KafkaTopics = map[string]string{
 }
 
 var OrdersSEC_KafkaEvents = []string{
-	"event.order.process",
-	"event.inventory.rollback_failed",
-	"event.inventory.rollback_success",
-	"event.inventory.reservation_failed",
-	"event.inventory.reservation_succeeded",
+	"event.order.process",                    // 0
+
+	"event.inventory.rollback_failed",        // 1
+	"event.inventory.rollback_success",       // 2
+	"event.inventory.reservation_failed",     // 3
+	"event.inventory.reservation_succeeded",  // 4
+
+	"event.payment.verify_failed",            // 5
+	"event.payment.rollback_failed",          // 6
+	"event.payment.rollback_success",         // 7
+	"event.payment.verify_succeeded",         // 8
 }
 
 var Inventory_KafkaEvents = []string{
 	"event.inventory.verify",
 	"event.inventory.rollback",
+}
+
+var Payment_KafkaEvents = []string{
+	"event.payment.verify",
+	"event.payment.rollback",
 }
 
 func StartKafkaProducer(kafka_host string) (*sarama.SyncProducer, error) {
