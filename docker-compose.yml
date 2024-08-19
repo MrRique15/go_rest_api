@@ -42,8 +42,8 @@ services:
     depends_on:
       - kafka
     environment:
-      MONGOURI: mongodb+srv://ra115408:henriqueh1515@cluster0.y29zv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-      MONGODATABASE: Cluster0
+      MONGOURI: mongodb://localhost:27017
+      MONGODATABASE: database_name
       KAFKAHOST: kafka:9092
     networks:
       - kafka-server
@@ -57,8 +57,8 @@ services:
     depends_on:
       - kafka
     environment:
-      MONGOURI: mongodb+srv://ra115408:henriqueh1515@cluster0.y29zv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-      MONGODATABASE: Cluster0
+      MONGOURI: mongodb://localhost:27017
+      MONGODATABASE: database_name
       KAFKAHOST: kafka:9092
       GIN_MODE: release
     networks:
@@ -71,8 +71,8 @@ services:
     depends_on:
       - kafka
     environment:
-      MONGOURI: mongodb+srv://ra115408:henriqueh1515@cluster0.y29zv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-      MONGODATABASE: Cluster0
+      MONGOURI: mongodb://localhost:27017
+      MONGODATABASE: database_name
       KAFKAHOST: kafka:9092
     networks:
       - kafka-server
@@ -84,8 +84,8 @@ services:
     depends_on:
       - kafka
     environment:
-      MONGOURI: mongodb+srv://ra115408:henriqueh1515@cluster0.y29zv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-      MONGODATABASE: Cluster0
+      MONGOURI: mongodb://localhost:27017
+      MONGODATABASE: database_name
       KAFKAHOST: kafka:9092
     networks:
       - kafka-server
@@ -97,8 +97,8 @@ services:
     depends_on:
       - kafka
     environment:
-      MONGOURI: mongodb+srv://ra115408:henriqueh1515@cluster0.y29zv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-      MONGODATABASE: Cluster0
+      MONGOURI: mongodb://localhost:27017
+      MONGODATABASE: database_name
       KAFKAHOST: kafka:9092
     networks:
       - kafka-server
