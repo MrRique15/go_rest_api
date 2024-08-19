@@ -58,11 +58,11 @@ func StartKafkaProducer(kafka_host string) (*sarama.SyncProducer, error) {
 
     producer, err := sarama.NewSyncProducer([]string{kafka_host}, config)
     if err != nil {
-        log.Fatal("Failed to start Kafka producer:", err)
+        log.Fatal("Failed to start Kafka producer: ", err)
     }
 
 	if err != nil {
-		log.Fatal("Failed to connect to Kafka:", err)
+		log.Fatal("Failed to connect to Kafka: ", err)
 		return nil, err
 	}
 
@@ -115,7 +115,7 @@ func NewKafkaProducer(kafka_host string) *KafkaProducer {
 	producer, error := StartKafkaProducer(kafka_host)
 
 	if error != nil {
-		panic(errors.New("error connecting to kafka"))
+		log.Fatalf("error starting kafka producer to kafka: %v", error)
 	}
 
 	kafkaProd := KafkaProducer{
