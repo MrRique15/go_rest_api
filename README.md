@@ -10,8 +10,10 @@ This is an API built with the Go programming language, the Gin web framework and
 - [API Endpoints](#api-endpoints)
 - [Testing the Application](#testing-the-application)
 - [Running Kafka and Zookeeper with Docker](#running-kafka-and-zookeeper-with-docker)
-- [Running Saga Execution Controller](#running-saga-execution-controller)
-- [Running Inventory Service](#running-inventory-service)
+- [Running Services](#running-services)
+   - [Running Saga Execution Controller](#running-saga-execution-controller)
+   - [Running Inventory Service](#running-inventory-service)
+   - [Running Payment Service](#running-payment-service)
 - [Building the API Gateway](#building-the-api-gateway)
 - [Contributing](#contributing)
 - [License](#license)
@@ -77,8 +79,11 @@ To run Kafka and Zookeeper with Docker, execute the following command:
 cd kafka
 docker-compose up
 ```
+## Running Services
+This section will show how to run the services that are part of the SAGA pattern implementation. All services need to be running to test the SAGA pattern correctly.
+Obs*: In further versions of this project, it will be implemented a way to run all services with a single command using Docker Compose.
 
-## Running Saga Execution Controller
+### Running Saga Execution Controller
 The Saga Execution Controller will watch for new events by consuming the `order_sec` topic from kafka, triggered by the API Gateway and servicer. It will control the sequence of events to complete order processing or cancelation.
 
 ```bash
@@ -86,7 +91,7 @@ cd saga_execution_controller
 go run main.go
 ```
 
-## Running Inventory Service
+### Running Inventory Service
 
 The inventory service will watch for new events by consuming the `inventory` topic from kafka, triggered by Saga Execution Controller and then it will update items inventory and order status.
 If the item is out of stock, it will send a message to the Saga Execution Controller informing the order cancelation, using the `order_sec` topic.
@@ -94,6 +99,17 @@ On the other hand, if the item is in stock, it will send a message to the Saga E
 
 ```bash
 cd inventory_service
+go run main.go
+```
+
+### Running Payment Service
+
+The payment service will watch for new events by consuming the `payment` topic from kafka, triggered by Saga Execution Controller and then it will update order status when payment is completed.
+If the order isn't reserved in inventory or the payment is not completed, it will send a message to the Saga Execution Controller informing the problem, using the `order_sec` topic.
+On the other hand, it's all checked, it will send a message to the Saga Execution Controller to proceed with the order, using the `payment` topic.
+
+```bash
+cd payment_service
 go run main.go
 ```
 
