@@ -4,9 +4,9 @@ import (
 	"errors"
 	"log"
 
-	"github.com/MrRique15/go_rest_api/pkg/shared/kafka"
-	"github.com/MrRique15/go_rest_api/pkg/shared/models"
-	"github.com/MrRique15/go_rest_api/pkg/utils"
+	"github.com/MrRique15/go_rest_api/main_api/pkg/shared/kafka"
+	"github.com/MrRique15/go_rest_api/main_api/pkg/shared/models"
+	"github.com/MrRique15/go_rest_api/main_api/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 

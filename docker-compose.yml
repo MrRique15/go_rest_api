@@ -60,6 +60,7 @@ services:
       MONGOURI: mongodb+srv://ra115408:henriqueh1515@cluster0.y29zv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       MONGODATABASE: Cluster0
       KAFKAHOST: kafka:9092
+      GIN_MODE: release
     networks:
       - kafka-server
 

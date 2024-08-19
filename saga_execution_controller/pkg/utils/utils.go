@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 
-	"github.com/MrRique15/go_rest_api/pkg/shared/models"
+	"github.com/MrRique15/go_rest_api/saga_execution_controller/pkg/shared/models"
 	"golang.org/x/crypto/bcrypt"
 )
 

@@ -7,7 +7,7 @@ import (
 	"github.com/MrRique15/go_rest_api/saga_execution_controller/consumers"
 	"github.com/MrRique15/go_rest_api/saga_execution_controller/env"
 	"github.com/MrRique15/go_rest_api/saga_execution_controller/producers"
-	"github.com/MrRique15/go_rest_api/pkg/shared/kafka"
+	"github.com/MrRique15/go_rest_api/saga_execution_controller/pkg/shared/kafka"
 )
 
 func main() {

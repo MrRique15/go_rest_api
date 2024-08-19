@@ -6,7 +6,7 @@ import (
 
 	"github.com/IBM/sarama"
 	"github.com/MrRique15/go_rest_api/payment_service/event_handlers"
-	"github.com/MrRique15/go_rest_api/pkg/utils"
+	"github.com/MrRique15/go_rest_api/payment_service/pkg/utils"
 )
 
 func PaymentConsumer(consumer sarama.Consumer, topic string, offset int64) {

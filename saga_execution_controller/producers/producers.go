@@ -1,8 +1,8 @@
 package producers
 
 import (
-	"github.com/MrRique15/go_rest_api/inventory_service/env"
-	"github.com/MrRique15/go_rest_api/pkg/shared/kafka"
+	"github.com/MrRique15/go_rest_api/saga_execution_controller/env"
+	"github.com/MrRique15/go_rest_api/saga_execution_controller/pkg/shared/kafka"
 )
 
 var KafkaProducer *kafka.KafkaProducer

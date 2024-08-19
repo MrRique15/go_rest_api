@@ -6,7 +6,7 @@ import (
 	"github.com/MrRique15/go_rest_api/main_api/repositories"
 	"github.com/MrRique15/go_rest_api/main_api/responses"
 	"github.com/MrRique15/go_rest_api/main_api/services"
-	"github.com/MrRique15/go_rest_api/pkg/shared/models"
+	"github.com/MrRique15/go_rest_api/main_api/pkg/shared/models"
 
 	"github.com/gin-gonic/gin"
 

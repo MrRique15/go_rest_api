@@ -5,8 +5,8 @@ import (
 
 	"errors"
 
-	"github.com/MrRique15/go_rest_api/main_api/repositories"
-	"github.com/MrRique15/go_rest_api/pkg/shared/models"
+	"github.com/MrRique15/go_rest_api/payment_service/repositories"
+	"github.com/MrRique15/go_rest_api/payment_service/pkg/shared/models"
 )
 
 var ordersRepository = repositories.NewOrdersRepository(&repositories.MongoDBHandlerOrders{})

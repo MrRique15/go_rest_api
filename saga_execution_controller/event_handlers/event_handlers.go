@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/MrRique15/go_rest_api/pkg/shared/kafka"
-	"github.com/MrRique15/go_rest_api/pkg/shared/models"
-	"github.com/MrRique15/go_rest_api/pkg/utils"
+	"github.com/MrRique15/go_rest_api/saga_execution_controller/pkg/shared/kafka"
+	"github.com/MrRique15/go_rest_api/saga_execution_controller/pkg/shared/models"
+	"github.com/MrRique15/go_rest_api/saga_execution_controller/pkg/utils"
 	"github.com/MrRique15/go_rest_api/saga_execution_controller/producers"
 )
 

@@ -6,7 +6,7 @@ import (
 
 	"github.com/IBM/sarama"
 	"github.com/MrRique15/go_rest_api/saga_execution_controller/event_handlers"
-	"github.com/MrRique15/go_rest_api/pkg/utils"
+	"github.com/MrRique15/go_rest_api/saga_execution_controller/pkg/utils"
 )
 
 func OrdersSECConsumer(consumer sarama.Consumer, topic string, offset int64) {

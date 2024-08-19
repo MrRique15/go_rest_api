@@ -7,7 +7,7 @@ import (
 	router "github.com/MrRique15/go_rest_api/main_api/routes"
 )
 
-var defaultAddress = "localhost:8080"
+var defaultAddress = ":8080"
 
 func main() {
 	repositories.StartKafkaProducer()
