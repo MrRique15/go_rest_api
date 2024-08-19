@@ -43,10 +43,18 @@ func handleVerifyerifyPayment(event models.KafkaOrderEvent) error {
 		return err
 	}
 
-	payment_operations.UpdateOrderStatus(event.Order, "paid")
+	updated_order, err := payment_operations.UpdateOrderStatus(event.Order, "paid")
 
-	event.Event = kafka.OrdersSEC_KafkaEvents[8]
-	sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+	if err != nil {
+		fmt.Println("Error updating order status for order: ", event.Order.ID)
+	}
+
+	kafka_payment_event := models.KafkaOrderEvent{
+		Event: kafka.OrdersSEC_KafkaEvents[8],
+		Order: updated_order,
+	}
+
+	sendKafkaEvent(kafka.KafkaTopics["order_sec"], kafka_payment_event)
 
 	return nil
 }
@@ -63,10 +71,18 @@ func handleRollbackPayment(event models.KafkaOrderEvent) error {
 		return err
 	}
 
-	payment_operations.UpdateOrderStatus(event.Order, "refounded")
+	updatedOrder, err := payment_operations.UpdateOrderStatus(event.Order, "refounded")
 
-	event.Event = kafka.OrdersSEC_KafkaEvents[7]
-	sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+	if err != nil {
+		fmt.Println("Error updating order status for order: ", event.Order.ID)
+	}
+
+	kafka_rollback_event := models.KafkaOrderEvent{
+		Event: kafka.OrdersSEC_KafkaEvents[7],
+		Order: updatedOrder,
+	}
+
+	sendKafkaEvent(kafka.KafkaTopics["order_sec"], kafka_rollback_event)
 
 	return nil
 }

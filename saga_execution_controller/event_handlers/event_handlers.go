@@ -26,14 +26,17 @@ func sendKafkaEvent(topic string, event models.KafkaOrderEvent) error {
 type EventHandler func(event models.KafkaOrderEvent) error
 
 var eventHandlers = map[string]EventHandler{
-	"event.order.process": handleProcessOrder,
+	kafka.OrdersSEC_KafkaEvents[0]: handleProcessOrder,
 
-	"event.inventory.rollback_failed": handleFailedInventoryRollback,
-	"event.inventory.rollback_success": handleSuccessInventoryRollback,
-	"event.inventory.reservation_failed": handleFailedInventoryReservation,
-	"event.inventory.reservation_succeeded": handleSucceededInventoryReservation,
+	kafka.OrdersSEC_KafkaEvents[1]: handleFailedInventoryRollback,
+	kafka.OrdersSEC_KafkaEvents[2]: handleSucceededInventoryRollback,
+	kafka.OrdersSEC_KafkaEvents[3]: handleFailedInventoryReservation,
+	kafka.OrdersSEC_KafkaEvents[4]: handleSucceededInventoryReservation,
 
-
+	kafka.OrdersSEC_KafkaEvents[5]: handleFailedPaymentVerification,
+	kafka.OrdersSEC_KafkaEvents[6]: handleFailedPaymentRollback,
+	kafka.OrdersSEC_KafkaEvents[7]: handleSucceededPaymentRollback,
+	kafka.OrdersSEC_KafkaEvents[8]: handleSucceededPaymentVerification,
 }
 
 func handleProcessOrder(event models.KafkaOrderEvent) error {
@@ -45,18 +48,21 @@ func handleProcessOrder(event models.KafkaOrderEvent) error {
 	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], eventMessage)
 
 	if err != nil {
-		log.Panic("error sending message to inventory_sec: ", err)
+		log.Panic("error sending message to inventory topic: ", err)
 	}
 
 	return nil
 }
 
+// ------------------------------------------
+// --- Inventory Handlers ---
+// ------------------------------------------
 func handleFailedInventoryRollback(event models.KafkaOrderEvent) error {
 	fmt.Println("Rollback failed for order: ", event.Order.ID)
 	return nil
 }
 
-func handleSuccessInventoryRollback(event models.KafkaOrderEvent) error {
+func handleSucceededInventoryRollback(event models.KafkaOrderEvent) error {
 	fmt.Println("Rollback succeeded for order: ", event.Order.ID)
 	return nil
 }
@@ -67,9 +73,70 @@ func handleFailedInventoryReservation(event models.KafkaOrderEvent) error {
 }
 
 func handleSucceededInventoryReservation(event models.KafkaOrderEvent) error {
-	// TODO: Trigger event to Payment service
+	event.Event = kafka.Payment_KafkaEvents[0]
+
+	err := sendKafkaEvent(kafka.KafkaTopics["payment"], event)
+
+	if err != nil {
+		log.Panic("error sending message to payment topic: ", err)
+	}
+
 	return nil
 }
+
+// ------------------------------------------
+// --- Payment Handlers ---
+// ------------------------------------------
+func handleFailedPaymentVerification(event models.KafkaOrderEvent) error {
+	event.Event = kafka.Inventory_KafkaEvents[1]
+
+	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], event)
+
+	if err != nil {
+		log.Panic("error sending message to inventory topic: ", err)
+	}
+
+	return nil
+}
+
+func handleFailedPaymentRollback(event models.KafkaOrderEvent) error {
+	
+	event.Event = kafka.Inventory_KafkaEvents[1]
+
+	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], event)
+
+	if err != nil {
+		log.Panic("error sending message to inventory topic: ", err)
+	}
+
+	return nil
+}
+
+func handleSucceededPaymentRollback(event models.KafkaOrderEvent) error {
+	event.Event = kafka.Inventory_KafkaEvents[1]
+
+	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], event)
+
+	if err != nil {
+		log.Panic("error sending message to inventory topic: ", err)
+	}
+
+	return nil
+}
+
+func handleSucceededPaymentVerification(event models.KafkaOrderEvent) error {
+	fmt.Println("Payment succeeded for order: ", event.Order.ID)
+	// event.Event = kafka.Shipping_KafkaEvents[0]
+
+	// err := sendKafkaEvent(kafka.KafkaTopics["shipping"], eventMessage)
+
+	// if err != nil {
+	// 	log.Panic("error sending message to shipping topic : ", err)
+	// }
+
+	return nil
+}
+
 
 func HandleEvent(event models.KafkaOrderEvent) {
 	handler := eventHandlers[event.Event]
