@@ -9,55 +9,93 @@ import (
 )
 
 var prodcutsRepository = repositories.NewProductsRepository(&repositories.MongoDBHandlerProducts{})
+var ordersRepository = repositories.NewOrdersRepository(&repositories.MongoDBHandlerOrders{})
 
-func RemoveStock(item models.Item) error {
-	existingItem, err := prodcutsRepository.GetProductById(item.ProductID)
+
+func CheckInventory(items []models.Item) error {
+	for _, item := range items {
+		existingItem, err := prodcutsRepository.GetProductById(item.ProductID)
+
+		if err != nil {
+			return err
+		}
+
+		if existingItem.Stock < item.Quantity {
+			return errors.New("insufficient stock for item: " + existingItem.Name)
+		}
+	}
+
+	return nil
+}
+
+func RemoveStock(items []models.Item) error {
+	for _, item := range items {
+		existingItem, err := prodcutsRepository.GetProductById(item.ProductID)
+
+		if err != nil {
+			return err
+		}
+
+		existingItem.Stock -= item.Quantity
+
+		updated_product, update_error := prodcutsRepository.UpdateProduct(existingItem)
+
+		if update_error != nil {
+			return update_error
+		}
+
+		fmt.Println("\n---------Stock Update---------\nProduct: ", updated_product.Name, "\nRemaining Stock: ", updated_product.Stock)
+	}
+
+	return nil
+}
+
+func RollbackStock(items []models.Item) error {
+	for _, item := range items {
+		existingItem, err := prodcutsRepository.GetProductById(item.ProductID)
+
+		if err != nil {
+			return err
+		}
+
+		existingItem.Stock += item.Quantity
+
+		updated_product, update_error := prodcutsRepository.UpdateProduct(existingItem)
+
+		if update_error != nil {
+			return update_error
+		}
+
+		fmt.Println("\n---------Stock Rollback---------\nProduct: ", updated_product.Name, "\nRemaining Stock: ", updated_product.Stock)
+	}
+
+	return nil
+}
+
+// -------------------------------------
+// Orders Operations
+// -------------------------------------
+func CancelOrder(order models.Order) error {
+	order.Status = "cancelled"
+
+	_, err := ordersRepository.UpdateOrder(order)
 
 	if err != nil {
 		return err
 	}
 
-	if existingItem.Stock < item.Quantity {
-		return errors.New("insufficient stock for item: " + existingItem.Name)
-	}
-
-	existingItem.Stock -= item.Quantity
-
-	updated_product, update_error := prodcutsRepository.UpdateProduct(existingItem)
-
-	if update_error != nil {
-		return update_error
-	}
-
-	fmt.Println("\n----------------------------\nProduct: ", updated_product.Name, "\nRemaining Stock: ", updated_product.Stock)
-
+	// TODO: send email to customer
 	return nil
 }
 
-func ProcessOrder(completeEvent models.KafkaOrderEvent) {
-	switch completeEvent.Event {
-	case "order.event.created":
-		// Remove stock for each item
-		for _, item := range completeEvent.Order.Items {
-			err := RemoveStock(item)
+func UpdateOrderStatus(order models.Order, status string) (models.Order, error) {
+	order.Status = status
 
-			if err != nil {
-				fmt.Println("Error removing stock for item: ", item)
-				// TODO: Add rollback event for order in SAGA pattern
-			}
-		}
+	updatedOrder, err := ordersRepository.UpdateOrder(order)
 
-		// TODO: Add event for order processed in SAGA pattern
-
-	case "order.event.updated":
-
-		break
-
-	case "order.event.deleted":
-
-		break
-
-	default:
-		break
+	if err != nil {
+		return models.Order{}, err
 	}
+
+	return updatedOrder, nil
 }

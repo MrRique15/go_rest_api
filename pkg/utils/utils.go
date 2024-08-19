@@ -37,3 +37,13 @@ func ComparePasswords(password string, hashedPass string) error {
 	
 	return nil
 }
+
+func OrderToJson(order models.KafkaOrderEvent) (string, error) {
+	jsonOrder, error := json.Marshal(order)
+
+	if error != nil {
+		return "", error
+	}
+
+	return string(jsonOrder), nil
+}

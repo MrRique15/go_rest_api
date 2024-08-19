@@ -31,8 +31,3 @@ type Item struct {
 	ProductID  primitive.ObjectID `json:"product_id" validate:"required"`
 	Quantity   int                `json:"quantity" validate:"required"`
 }
-
-type KafkaOrderEvent struct {
-	Event string `json:"event"`
-	Order Order  `json:"order"`
-}

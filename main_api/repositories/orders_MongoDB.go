@@ -18,7 +18,7 @@ type MongoDBHandlerOrders struct {
 }
 
 func (dbh *MongoDBHandlerOrders) InitiateCollection() {
-	dbh.ordersCollection = mongodb.GetCollection(&MongoDB, "orders", env.EnvMongoDatabase())
+	dbh.ordersCollection = mongodb.GetCollection(MongoDB, "orders", env.EnvMongoDatabase())
 }
 
 func (dbh MongoDBHandlerOrders) getOrderById(id primitive.ObjectID) (models.Order, error) {

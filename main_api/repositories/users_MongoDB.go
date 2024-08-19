@@ -18,7 +18,7 @@ type MongoDBHandlerUsers struct {
 }
 
 func (dbh *MongoDBHandlerUsers) InitiateCollection() {
-	dbh.userCollection = mongodb.GetCollection(&MongoDB, "users", env.EnvMongoDatabase())
+	dbh.userCollection = mongodb.GetCollection(MongoDB, "users", env.EnvMongoDatabase())
 }
 
 func (dbh MongoDBHandlerUsers) findOneID(id primitive.ObjectID) (models.User, error) {

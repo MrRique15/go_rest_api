@@ -18,7 +18,7 @@ type MongoDBHandlerProducts struct {
 }
 
 func (dbh *MongoDBHandlerProducts) InitiateCollection() {
-	dbh.productsCollection = mongodb.GetCollection(&MongoDB, "products", env.EnvMongoDatabase())
+	dbh.productsCollection = mongodb.GetCollection(MongoDB, "products", env.EnvMongoDatabase())
 }
 
 func (dbh MongoDBHandlerProducts) getProductById(id primitive.ObjectID) (models.Product, error) {

@@ -1,10 +1,12 @@
 package repositories
 
 import (
-	"encoding/json"
 	"errors"
 	"log"
+
+	"github.com/MrRique15/go_rest_api/pkg/shared/kafka"
 	"github.com/MrRique15/go_rest_api/pkg/shared/models"
+	"github.com/MrRique15/go_rest_api/pkg/utils"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -29,16 +31,6 @@ func NewOrdersRepository(dbh DBHandlerOrders) *OrdersRepository {
 	return &OrdersRepository
 }
 
-func orderToJson(order models.KafkaOrderEvent) (string, error) {
-	jsonOrder, error := json.Marshal(order)
-
-	if error != nil {
-		return "", error
-	}
-
-	return string(jsonOrder), nil
-}
-
 // ------------------------------------------------- Functions ----------------------------
 func (os OrdersRepository) GetOrderById(id primitive.ObjectID) (models.Order, error) {
 	order, err := os.db.getOrderById(id)
@@ -59,18 +51,17 @@ func (os OrdersRepository) RegisterOrder(newOrder models.Order) (models.Order, e
 
 	var OrderEvent = models.KafkaOrderEvent{
 		Order: order,
-		Event: "order.event.created",
+		Event: kafka.OrdersSEC_KafkaEvents[0],
 	}
 
-	stringOrder, error := orderToJson(OrderEvent)
+	stringOrder, error := utils.OrderToJson(OrderEvent)
 
 	if error != nil {
 		log.Println("error during order transformation for kafka event")
 	}
 
-	// send kafka event
 	if error == nil {
-		KafkaProducer.SendKafkaEvent("order", stringOrder)
+		KafkaProducer.SendKafkaEvent(kafka.KafkaTopics["order_sec"], stringOrder)
 	}
 
 	return order, nil

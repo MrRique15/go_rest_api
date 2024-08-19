@@ -4,9 +4,30 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/IBM/sarama"
 )
+
+var KafkaTopics = map[string]string{
+	"order_sec": "order_sec",
+	"inventory": "inventory",
+	"payment": "payment",
+	"shipping": "shipping",
+}
+
+var OrdersSEC_KafkaEvents = []string{
+	"event.order.process",
+	"event.inventory.rollback_failed",
+	"event.inventory.rollback_success",
+	"event.inventory.reservation_failed",
+	"event.inventory.reservation_succeeded",
+}
+
+var Inventory_KafkaEvents = []string{
+	"event.inventory.verify",
+	"event.inventory.rollback",
+}
 
 func StartKafkaProducer(kafka_host string) (*sarama.SyncProducer, error) {
 	config := sarama.NewConfig()
@@ -18,7 +39,6 @@ func StartKafkaProducer(kafka_host string) (*sarama.SyncProducer, error) {
     if err != nil {
         log.Fatal("Failed to start Kafka producer:", err)
     }
-    // defer producer.Close()
 
 	if err != nil {
 		log.Fatal("Failed to connect to Kafka:", err)
@@ -33,12 +53,14 @@ func StartKafkaProducer(kafka_host string) (*sarama.SyncProducer, error) {
 func StartKafkaConsumer(kafka_host string) (sarama.Consumer, error) {
     config := sarama.NewConfig()
     config.Consumer.Return.Errors = true
+	config.Consumer.Offsets.AutoCommit.Enable = true
+	config.Consumer.Offsets.AutoCommit.Interval = 2 * time.Minute
+	config.Consumer.Offsets.Initial = sarama.OffsetNewest
 
     consumer, err := sarama.NewConsumer([]string{kafka_host}, config)
     if err != nil {
         log.Fatalf("Erro ao criar consumidor: %v", err)
     }
-    // defer consumer.Close()
 
 	fmt.Println("Started Kafka Consumer")
 
