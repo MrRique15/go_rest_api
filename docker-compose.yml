@@ -49,6 +49,20 @@ services:
       - "5432:5432"
     expose:
       - "5432"
+
+  main-db:
+    image: mongo:latest
+    container_name: main-db
+    restart: always
+    networks:
+      - kafka-server
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=1234
+    ports:
+      - "27017:27017"
+    expose:
+      - "27017"
       
   sec:
     build: './saga_execution_controller'
@@ -57,8 +71,8 @@ services:
     depends_on:
       - kafka
     environment:
-      MONGOURI: mongodb://localhost:27017
-      MONGODATABASE: database_name
+      MONGOURI: mongodb://admin:1234@main-db:27017
+      MONGODATABASE: main-database
       KAFKAHOST: kafka:9092
     networks:
       - kafka-server
@@ -73,8 +87,8 @@ services:
       - kafka
       - shipping
     environment:
-      MONGOURI: mongodb://localhost:27017
-      MONGODATABASE: database_name
+      MONGOURI: mongodb://admin:1234@main-db:27017
+      MONGODATABASE: main-database
       KAFKAHOST: kafka:9092
       GIN_MODE: release
       POSTGRES_SHIPPING_DATABASE: 'host=shipping-db port=5432 user=admin password=1234 dbname=shipping-db sslmode=disable'
@@ -88,8 +102,8 @@ services:
     depends_on:
       - kafka
     environment:
-      MONGOURI: mongodb://localhost:27017
-      MONGODATABASE: database_name
+      MONGOURI: mongodb://admin:1234@main-db:27017
+      MONGODATABASE: main-database
       KAFKAHOST: kafka:9092
     networks:
       - kafka-server
@@ -101,8 +115,8 @@ services:
     depends_on:
       - kafka
     environment:
-      MONGOURI: mongodb://localhost:27017
-      MONGODATABASE: database_name
+      MONGOURI: mongodb://admin:1234@main-db:27017
+      MONGODATABASE: main-database
       KAFKAHOST: kafka:9092
     networks:
       - kafka-server
@@ -115,8 +129,8 @@ services:
       - kafka
       - shipping
     environment:
-      MONGOURI: mongodb://localhost:27017
-      MONGODATABASE: database_name
+      MONGOURI: mongodb://admin:1234@main-db:27017
+      MONGODATABASE: main-database
       KAFKAHOST: kafka:9092
       POSTGRES_SHIPPING_DATABASE: 'host=shipping-db port=5432 user=admin password=1234 dbname=shipping-db sslmode=disable'
     networks:
