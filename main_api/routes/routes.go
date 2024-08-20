@@ -33,6 +33,10 @@ func ProductsRouter(router *gin.Engine) {
 	router.PUT("/products/update", controllers.UpdateProduct)
 }
 
+func ShippingRouter(router *gin.Engine) {
+	router.GET("/shipping", controllers.ListShipping)
+}
+
 func RunRouter(router *gin.Engine, addr string) error {
 	addressArray := strings.Split(addr, ":")
 

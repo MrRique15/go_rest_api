@@ -18,7 +18,7 @@ import (
 var validateOrder = validator.New()
 
 var ordersRepository = repositories.NewOrdersRepository(&repositories.MongoDBHandlerOrders{})
-var ordersService = services.NewOrdersService(ordersRepository)
+var ordersService = services.NewOrdersService(ordersRepository, shippingRepository)
 
 func NewOrder(c *gin.Context) {
 	var order models.NewOrder

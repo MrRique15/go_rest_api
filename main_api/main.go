@@ -17,7 +17,8 @@ func main() {
 	router.UsersRouter(mainRouter)
 	router.OrdersRouter(mainRouter)
 	router.ProductsRouter(mainRouter)
-
+	router.ShippingRouter(mainRouter)
+	
 	if err := router.RunRouter(mainRouter, defaultAddress); err != nil {
 		fmt.Println("Internal Server Error, Exiting API")
 		return

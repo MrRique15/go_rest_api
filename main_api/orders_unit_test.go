@@ -11,7 +11,8 @@ import (
 )
 
 var ordersRepository = repositories.NewOrdersRepository(&repositories.MemoryDBHandlerOrders{})
-var ordersService = services.NewOrdersService(ordersRepository)
+var shippingRepository = repositories.NewShippingRepository(&repositories.MemoryDBHandlerShipping{})
+var ordersService = services.NewOrdersService(ordersRepository, shippingRepository)
 
 var originalCustomer = models.User{
 	Name:     "test customer",

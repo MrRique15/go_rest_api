@@ -35,14 +35,14 @@ services:
     networks:
       - kafka-server
 
-  shipping-db:
+  shipping:
     image: postgres:latest
-    container_name: shipping-db
+    container_name: shipping
     restart: always
     networks:
       - kafka-server
     environment:
-      - POSTGRES_DB=shipping-db
+      - POSTGRES_DB=shipping
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=1234
     ports:
@@ -69,7 +69,7 @@ services:
       - "8080:8080"
     depends_on:
       - kafka
-      - shipping-db
+      - shipping
     environment:
       MONGOURI: mongodb://localhost:27017
       MONGODATABASE: database_name
@@ -111,12 +111,12 @@ services:
     restart: unless-stopped
     depends_on:
       - kafka
-      - shipping-db
+      - shipping
     environment:
       MONGOURI: mongodb://localhost:27017
       MONGODATABASE: database_name
       KAFKAHOST: kafka:9092
-      POSTGRES_SHIPPING_DATABASE: 'host=localhost port=5430 user=admin password=1234 dbname=shipping-db sslmode=disable'
+      POSTGRES_SHIPPING_DATABASE: 'host=localhost port=5430 user=admin password=1234 dbname=shipping sslmode=disable'
     networks:
       - kafka-server
 

@@ -10,12 +10,10 @@ import (
 
 type MemoryDBHandlerOrders struct {
 	ordersCollection *[]models.Order
-	shippingDatabase *[]models.Shipping
 }
 
 func (dbh *MemoryDBHandlerOrders) InitiateCollection() {
 	dbh.ordersCollection = &[]models.Order{}
-	dbh.shippingDatabase = &[]models.Shipping{}
 }
 
 func (dbh MemoryDBHandlerOrders) getOrderById(id primitive.ObjectID) (models.Order, error) {
@@ -40,23 +38,6 @@ func (dbh MemoryDBHandlerOrders) registerOrder(order models.Order) (models.Order
 	}
 
 	*dbh.ordersCollection = newCollection
-
-	newDatabase := *dbh.shippingDatabase
-
-	newDatabase = append(newDatabase, models.Shipping{
-		ID:           primitive.NewObjectID(),
-		ShippingType: "standard",
-		OrderID:      order.ID,
-		ShippingPrice: float64(order.Price) * 0.1,
-	})
-
-	newShipping := newDatabase[len(newDatabase)-1]
-
-	if newShipping.OrderID != order.ID {
-		return models.Order{}, errors.New("error during order registration")
-	}
-
-	*dbh.shippingDatabase = newDatabase
 
 	return order, nil
 }

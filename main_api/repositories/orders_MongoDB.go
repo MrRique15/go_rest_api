@@ -3,7 +3,7 @@ package repositories
 import (
 	"context"
 	"errors"
-	"fmt"
+	// "fmt"
 	"time"
 
 	"github.com/MrRique15/go_rest_api/main_api/env"
@@ -13,24 +13,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"database/sql"
+	// "database/sql"
+	// _ "github.com/lib/pq"
 )
 
 type MongoDBHandlerOrders struct {
 	ordersCollection *mongo.Collection
-	shippingDatabase *sql.DB
 }
 
 func (dbh *MongoDBHandlerOrders) InitiateCollection() {
 	dbh.ordersCollection = mongodb.GetCollection(MongoDB, "orders", env.EnvMongoDatabase())
-	// TODO: Implement shipping repository in separate file later
-	postgress_database, err := sql.Open("postgres", env.EnvShippingDatabase())
-
-	if err != nil {
-		panic("Error during shipping database connection")
-	}
-
-	dbh.shippingDatabase = postgress_database
 }
 
 func (dbh MongoDBHandlerOrders) getOrderById(id primitive.ObjectID) (models.Order, error) {
@@ -56,24 +48,7 @@ func (dbh MongoDBHandlerOrders) registerOrder(order models.Order) (models.Order,
 	if err != nil {
 		return models.Order{}, errors.New("error during order registration")
 	}
-
-	newShippingRegister := models.Shipping{
-		ID:           primitive.NewObjectID(),
-		ShippingType: "standard",
-		OrderID:      order.ID,
-		ShippingPrice: float64(order.Price) * 0.1,
-	}
 	
-	sql_query := `INSERT INTO shipping (_id, shipping_type, order_id, shipping_price) VALUES ($1, $2, $3, $4) RETURNING order_id`
-
-	var order_id primitive.ObjectID
-
-	error_sql := dbh.shippingDatabase.QueryRow(sql_query, newShippingRegister.ID, newShippingRegister.ShippingType, newShippingRegister.OrderID, newShippingRegister.ShippingPrice).Scan(&order_id)
-
-	if error_sql != nil {
-		fmt.Println("Error during shipping registration: ", error_sql)
-	}
-
 	return dbh.getOrderById(order.ID)
 }
 

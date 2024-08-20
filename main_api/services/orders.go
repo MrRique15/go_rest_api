@@ -2,20 +2,23 @@ package services
 
 import (
 	"errors"
+	"fmt"
 
-	"github.com/MrRique15/go_rest_api/main_api/repositories"
 	"github.com/MrRique15/go_rest_api/main_api/pkg/shared/models"
+	"github.com/MrRique15/go_rest_api/main_api/repositories"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type OrdersService struct {
-	ordersRepository *repositories.OrdersRepository
+	ordersRepository   *repositories.OrdersRepository
+	shippingRepository *repositories.ShippingRepository
 }
 
-func NewOrdersService(ord *repositories.OrdersRepository) *OrdersService {
+func NewOrdersService(ord *repositories.OrdersRepository, ship *repositories.ShippingRepository) *OrdersService {
 	ordersService := OrdersService{
-		ordersRepository: ord,
+		ordersRepository:   ord,
+		shippingRepository: ship,
 	}
 
 	return &ordersService
@@ -29,14 +32,31 @@ func (os OrdersService) RegisterOrder(order models.Order) (models.Order, error) 
 	}
 
 	orderToInsert := models.Order{
-		ID:       order.ID,
+		ID:         order.ID,
 		CustomerID: order.CustomerID,
-		Price:    order.Price,
-		Items:    order.Items,
-		Status:   order.Status,
+		Price:      order.Price,
+		Items:      order.Items,
+		Status:     order.Status,
 	}
 
 	registeredOrder, err := os.ordersRepository.RegisterOrder(orderToInsert)
+
+	if err != nil {
+		return models.Order{}, errors.New("error during order registration")
+	}
+
+	newShippingRegister := models.Shipping{
+		ID:            0,
+		ShippingType:  "standard",
+		OrderID:       order.ID.String(),
+		ShippingPrice: float64(order.Price) * 0.1,
+	}
+
+	_, err = os.shippingRepository.RegisterShipping(newShippingRegister)
+
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	return registeredOrder, err
 }
@@ -49,11 +69,11 @@ func (os OrdersService) UpdateOrder(order models.Order) (models.Order, error) {
 	}
 
 	orderToUpdate := models.Order{
-		ID:       order.ID,
+		ID:         order.ID,
 		CustomerID: order.CustomerID,
-		Price:    order.Price,
-		Items:    order.Items,
-		Status:   order.Status,
+		Price:      order.Price,
+		Items:      order.Items,
+		Status:     order.Status,
 	}
 
 	updatedOrder, err := os.ordersRepository.UpdateOrder(orderToUpdate)

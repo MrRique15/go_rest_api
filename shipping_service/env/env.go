@@ -15,3 +15,7 @@ func EnvMongoDatabase() string {
 func EnvKafkaHost() string {
     return os.Getenv("KAFKAHOST")
 }
+
+func EnvShippingDatabase() string {
+    return os.Getenv("POSTGRES_SHIPPING_DATABASE")
+}
