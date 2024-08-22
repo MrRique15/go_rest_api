@@ -4,12 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/MrRique15/go_rest_api/inventory_service/inventory_operations"
-	"github.com/MrRique15/go_rest_api/inventory_service/producers"
 	"github.com/MrRique15/go_rest_api/inventory_service/pkg/shared/kafka"
 	"github.com/MrRique15/go_rest_api/inventory_service/pkg/shared/models"
 	"github.com/MrRique15/go_rest_api/inventory_service/pkg/utils"
+	"github.com/MrRique15/go_rest_api/inventory_service/producers"
 )
 
 type EventHandler func(event models.KafkaOrderEvent) error
@@ -35,9 +36,22 @@ func sendKafkaEvent(topic string, event models.KafkaOrderEvent) error {
 func handleVerifyInventory(event models.KafkaOrderEvent) error {
 	if len(event.Order.Items) == 0 {
 		inventory_operations.CancelOrder(event.Order)
-
-		event.Event = kafka.OrdersSEC_KafkaEvents[3]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[3],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "INVENTORY_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
+		
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return errors.New("no items in order: " + event.Order.ID.String())
 	}
@@ -47,8 +61,21 @@ func handleVerifyInventory(event models.KafkaOrderEvent) error {
 	if err != nil {
 		inventory_operations.CancelOrder(event.Order)
 		
-		event.Event = kafka.OrdersSEC_KafkaEvents[3]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[3],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "INVENTORY_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
+
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return errors.New("insufficient stock for some items in order: " + event.Order.ID.String())
 	}
@@ -57,9 +84,22 @@ func handleVerifyInventory(event models.KafkaOrderEvent) error {
 
 	if inventory_update_error != nil {
 		inventory_operations.CancelOrder(event.Order)
-		
-		event.Event = kafka.OrdersSEC_KafkaEvents[3]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[3],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "INVENTORY_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
+
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return errors.New("error updating stock for some items in order: " + event.Order.ID.String())
 	}
@@ -69,18 +109,40 @@ func handleVerifyInventory(event models.KafkaOrderEvent) error {
 	if err != nil {
 		inventory_operations.CancelOrder(event.Order)
 
-		event.Event = kafka.OrdersSEC_KafkaEvents[3]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[3],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "INVENTORY_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
+
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return errors.New("error updating order status to reserved: " + event.Order.ID.String())
 	}
 
-	success_kafka_message := models.KafkaOrderEvent{
+	eventMessage := models.KafkaOrderEvent{
 		Event: kafka.OrdersSEC_KafkaEvents[4],
 		Order: updatedOrder,
+		CreatedAt: time.Now().String(),
+		Source: "INVENTORY_SERVICE",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
 	}
 
-	sendKafkaEvent(kafka.KafkaTopics["order_sec"], success_kafka_message)
+	sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 	return nil
 }
@@ -89,18 +151,42 @@ func handleRollbackInventory(event models.KafkaOrderEvent) error {
 	err := inventory_operations.RollbackStock(event.Order.Items)
 
 	if err != nil {
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[1],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "INVENTORY_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
 
-		event.Event = kafka.OrdersSEC_KafkaEvents[1]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return errors.New("error rolling back stock for some items in order: " + event.Order.ID.String())
 	}
 
 	inventory_operations.CancelOrder(event.Order)
 
-	event.Event = kafka.OrdersSEC_KafkaEvents[2]
+	eventMessage := models.KafkaOrderEvent{
+		Event: kafka.OrdersSEC_KafkaEvents[2],
+		Order: event.Order,
+		CreatedAt: time.Now().String(),
+		Source: "INVENTORY_SERVICE",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
+	}
 
-	sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+	sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 	return nil
 }

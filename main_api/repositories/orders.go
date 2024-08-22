@@ -3,6 +3,7 @@ package repositories
 import (
 	"errors"
 	"log"
+	"time"
 
 	"github.com/MrRique15/go_rest_api/main_api/pkg/shared/kafka"
 	"github.com/MrRique15/go_rest_api/main_api/pkg/shared/models"
@@ -52,6 +53,10 @@ func (os OrdersRepository) RegisterOrder(newOrder models.Order) (models.Order, e
 	var OrderEvent = models.KafkaOrderEvent{
 		Order: order,
 		Event: kafka.OrdersSEC_KafkaEvents[0],
+		Source: "API_GATEWAY",
+		Status: "PENDING",
+		EventHistory: []models.KafkaEventHistory{},
+		CreatedAt: time.Now().String(),
 	}
 
 	stringOrder, error := utils.OrderToJson(OrderEvent)

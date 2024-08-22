@@ -3,6 +3,7 @@ package event_handlers
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/MrRique15/go_rest_api/saga_execution_controller/pkg/shared/kafka"
 	"github.com/MrRique15/go_rest_api/saga_execution_controller/pkg/shared/models"
@@ -48,6 +49,15 @@ func handleProcessOrder(event models.KafkaOrderEvent) error {
 	eventMessage := models.KafkaOrderEvent{
 		Event: kafka.Inventory_KafkaEvents[0],
 		Order: event.Order,
+		CreatedAt: time.Now().String(),
+		Source: "SAGA_EXECUTION_CONTROLLER",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
 	}
 
 	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], eventMessage)
@@ -78,8 +88,21 @@ func handleFailedInventoryReservation(event models.KafkaOrderEvent) error {
 }
 
 func handleSucceededInventoryReservation(event models.KafkaOrderEvent) error {
-	event.Event = kafka.Payment_KafkaEvents[0]
-	err := sendKafkaEvent(kafka.KafkaTopics["payment"], event)
+	eventMessage := models.KafkaOrderEvent{
+		Event: kafka.Payment_KafkaEvents[0],
+		Order: event.Order,
+		CreatedAt: time.Now().String(),
+		Source: "SAGA_EXECUTION_CONTROLLER",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
+	}
+
+	err := sendKafkaEvent(kafka.KafkaTopics["payment"], eventMessage)
 
 	if err != nil {
 		log.Panic("error sending message to payment topic: ", err)
@@ -92,8 +115,21 @@ func handleSucceededInventoryReservation(event models.KafkaOrderEvent) error {
 // --- Payment Handlers ---
 // ------------------------------------------
 func handleFailedPaymentVerification(event models.KafkaOrderEvent) error {
-	event.Event = kafka.Inventory_KafkaEvents[1]
-	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], event)
+	eventMessage := models.KafkaOrderEvent{
+		Event: kafka.Inventory_KafkaEvents[1],
+		Order: event.Order,
+		CreatedAt: time.Now().String(),
+		Source: "SAGA_EXECUTION_CONTROLLER",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
+	}
+
+	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], eventMessage)
 
 	if err != nil {
 		log.Panic("error sending message to inventory topic: ", err)
@@ -104,8 +140,21 @@ func handleFailedPaymentVerification(event models.KafkaOrderEvent) error {
 
 func handleFailedPaymentRollback(event models.KafkaOrderEvent) error {
 	fmt.Println("Shipping Rollback failed for order: ", event.Order.ID)
-	event.Event = kafka.Inventory_KafkaEvents[1]
-	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], event)
+	eventMessage := models.KafkaOrderEvent{
+		Event: kafka.Inventory_KafkaEvents[1],
+		Order: event.Order,
+		CreatedAt: time.Now().String(),
+		Source: "SAGA_EXECUTION_CONTROLLER",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
+	}
+
+	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], eventMessage)
 
 	if err != nil {
 		log.Panic("error sending message to inventory topic: ", err)
@@ -115,8 +164,21 @@ func handleFailedPaymentRollback(event models.KafkaOrderEvent) error {
 }
 
 func handleSucceededPaymentRollback(event models.KafkaOrderEvent) error {
-	event.Event = kafka.Inventory_KafkaEvents[1]
-	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], event)
+	eventMessage := models.KafkaOrderEvent{
+		Event: kafka.Inventory_KafkaEvents[1],
+		Order: event.Order,
+		CreatedAt: time.Now().String(),
+		Source: "SAGA_EXECUTION_CONTROLLER",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
+	}
+
+	err := sendKafkaEvent(kafka.KafkaTopics["inventory"], eventMessage)
 
 	if err != nil {
 		log.Panic("error sending message to inventory topic: ", err)
@@ -127,7 +189,22 @@ func handleSucceededPaymentRollback(event models.KafkaOrderEvent) error {
 
 func handleSucceededPaymentVerification(event models.KafkaOrderEvent) error {
 	event.Event = kafka.Shipping_KafkaEvents[0]
-	err := sendKafkaEvent(kafka.KafkaTopics["shipping"], event)
+
+	eventMessage := models.KafkaOrderEvent{
+		Event: kafka.Shipping_KafkaEvents[0],
+		Order: event.Order,
+		CreatedAt: time.Now().String(),
+		Source: "SAGA_EXECUTION_CONTROLLER",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
+	}
+
+	err := sendKafkaEvent(kafka.KafkaTopics["shipping"], eventMessage)
 
 	if err != nil {
 		log.Panic("error sending message to shipping topic : ", err)
@@ -140,8 +217,21 @@ func handleSucceededPaymentVerification(event models.KafkaOrderEvent) error {
 // --- Shipping Handlers ---
 // ------------------------------------------
 func handleFailedShippingStart(event models.KafkaOrderEvent) error {
-	event.Event = kafka.Payment_KafkaEvents[1]
-	err := sendKafkaEvent(kafka.KafkaTopics["payment"], event)
+	eventMessage := models.KafkaOrderEvent{
+		Event: kafka.Payment_KafkaEvents[1],
+		Order: event.Order,
+		CreatedAt: time.Now().String(),
+		Source: "SAGA_EXECUTION_CONTROLLER",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
+	}
+
+	err := sendKafkaEvent(kafka.KafkaTopics["payment"], eventMessage)
 
 	if err != nil {
 		log.Panic("error sending message to payment topic: ", err)
@@ -157,8 +247,21 @@ func handleSucceededShippingStart(event models.KafkaOrderEvent) error {
 
 func handleFailedShippingRollback(event models.KafkaOrderEvent) error {
 	fmt.Println("Shipping Rollback failed for order: ", event.Order.ID)
-	event.Event = kafka.Payment_KafkaEvents[1]
-	err := sendKafkaEvent(kafka.KafkaTopics["payment"], event)
+	eventMessage := models.KafkaOrderEvent{
+		Event: kafka.Payment_KafkaEvents[1],
+		Order: event.Order,
+		CreatedAt: time.Now().String(),
+		Source: "SAGA_EXECUTION_CONTROLLER",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
+	}
+
+	err := sendKafkaEvent(kafka.KafkaTopics["payment"], eventMessage)
 
 	if err != nil {
 		log.Panic("error sending message to payment topic: ", err)
@@ -168,8 +271,21 @@ func handleFailedShippingRollback(event models.KafkaOrderEvent) error {
 }
 
 func handleSucceededShippingRollback(event models.KafkaOrderEvent) error {
-	event.Event = kafka.Payment_KafkaEvents[1]
-	err := sendKafkaEvent(kafka.KafkaTopics["payment"], event)
+	eventMessage := models.KafkaOrderEvent{
+		Event: kafka.Payment_KafkaEvents[1],
+		Order: event.Order,
+		CreatedAt: time.Now().String(),
+		Source: "SAGA_EXECUTION_CONTROLLER",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
+	}
+	
+	err := sendKafkaEvent(kafka.KafkaTopics["payment"], eventMessage)
 
 	if err != nil {
 		log.Panic("error sending message to payment topic: ", err)

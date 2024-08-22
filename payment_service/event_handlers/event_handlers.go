@@ -3,12 +3,13 @@ package event_handlers
 import (
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/MrRique15/go_rest_api/payment_service/payment_operations"
-	"github.com/MrRique15/go_rest_api/payment_service/producers"
 	"github.com/MrRique15/go_rest_api/payment_service/pkg/shared/kafka"
 	"github.com/MrRique15/go_rest_api/payment_service/pkg/shared/models"
 	"github.com/MrRique15/go_rest_api/payment_service/pkg/utils"
+	"github.com/MrRique15/go_rest_api/payment_service/producers"
 )
 
 type EventHandler func(event models.KafkaOrderEvent) error
@@ -36,9 +37,22 @@ func handleVerifyerifyPayment(event models.KafkaOrderEvent) error {
 
 	if err != nil {
 		fmt.Println("Error checking payment for order: ", event.Order.ID)
+		
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[5],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "PAYMENT_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
 
-		event.Event = kafka.OrdersSEC_KafkaEvents[5]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return err
 	}
@@ -48,18 +62,40 @@ func handleVerifyerifyPayment(event models.KafkaOrderEvent) error {
 	if err != nil {
 		fmt.Println("Error updating order status for order: ", event.Order.ID)
 
-		event.Event = kafka.OrdersSEC_KafkaEvents[5]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[5],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "PAYMENT_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
+
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return err
 	}
 
-	kafka_payment_event := models.KafkaOrderEvent{
+	eventMessage := models.KafkaOrderEvent{
 		Event: kafka.OrdersSEC_KafkaEvents[8],
 		Order: updated_order,
+		CreatedAt: time.Now().String(),
+		Source: "PAYMENT_SERVICE",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
 	}
 
-	sendKafkaEvent(kafka.KafkaTopics["order_sec"], kafka_payment_event)
+	sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 	return nil
 }
@@ -70,8 +106,21 @@ func handleRollbackPayment(event models.KafkaOrderEvent) error {
 	if err != nil {
 		fmt.Println("Error rolling back payment for order: ", event.Order.ID)
 
-		event.Event = kafka.OrdersSEC_KafkaEvents[6]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[6],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "PAYMENT_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
+
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return err
 	}
@@ -81,18 +130,40 @@ func handleRollbackPayment(event models.KafkaOrderEvent) error {
 	if err != nil {
 		fmt.Println("Error updating order status for order: ", event.Order.ID)
 
-		event.Event = kafka.OrdersSEC_KafkaEvents[6]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[6],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "PAYMENT_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
+
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return err
 	}
 
-	kafka_rollback_event := models.KafkaOrderEvent{
+	eventMessage := models.KafkaOrderEvent{
 		Event: kafka.OrdersSEC_KafkaEvents[7],
 		Order: updatedOrder,
+		CreatedAt: time.Now().String(),
+		Source: "PAYMENT_SERVICE",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
 	}
 
-	sendKafkaEvent(kafka.KafkaTopics["order_sec"], kafka_rollback_event)
+	sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 	return nil
 }

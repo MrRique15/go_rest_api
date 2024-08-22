@@ -3,12 +3,13 @@ package event_handlers
 import (
 	"fmt"
 	"log"
+	"time"
 
-	"github.com/MrRique15/go_rest_api/shipping_service/shipping_operations"
-	"github.com/MrRique15/go_rest_api/shipping_service/producers"
 	"github.com/MrRique15/go_rest_api/shipping_service/pkg/shared/kafka"
 	"github.com/MrRique15/go_rest_api/shipping_service/pkg/shared/models"
 	"github.com/MrRique15/go_rest_api/shipping_service/pkg/utils"
+	"github.com/MrRique15/go_rest_api/shipping_service/producers"
+	"github.com/MrRique15/go_rest_api/shipping_service/shipping_operations"
 )
 
 type EventHandler func(event models.KafkaOrderEvent) error
@@ -37,9 +38,21 @@ func handleStartShipping(event models.KafkaOrderEvent) error {
 	if err != nil {
 		fmt.Println("error starting shipping for order: ", event.Order.ID)
 
-		event.Event = kafka.OrdersSEC_KafkaEvents[9]
-
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[9],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "SHIPPING_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
+		
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return err
 	}
@@ -49,19 +62,40 @@ func handleStartShipping(event models.KafkaOrderEvent) error {
 	if err != nil {
 		fmt.Println("error updating order status for order: ", event.Order.ID)
 
-		event.Event = kafka.OrdersSEC_KafkaEvents[9]
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[9],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "SHIPPING_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
 
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return err
 	}
 
-	kafka_shipping_event := models.KafkaOrderEvent{
+	eventMessage := models.KafkaOrderEvent{
 		Event: kafka.OrdersSEC_KafkaEvents[10],
 		Order: updated_order,
+		CreatedAt: time.Now().String(),
+		Source: "SHIPPING_SERVICE",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
 	}
 
-	sendKafkaEvent(kafka.KafkaTopics["order_sec"], kafka_shipping_event)
+	sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 	return nil
 }
@@ -72,8 +106,21 @@ func handleRollbackShipping(event models.KafkaOrderEvent) error {
 	if err != nil {
 		fmt.Println("error rolling back shipping for order: ", event.Order.ID)
 
-		event.Event = kafka.OrdersSEC_KafkaEvents[11]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[11],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "SHIPPING_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
+
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return err
 	}
@@ -83,18 +130,40 @@ func handleRollbackShipping(event models.KafkaOrderEvent) error {
 	if err != nil {
 		fmt.Println("error updating order status for order: ", event.Order.ID)
 
-		event.Event = kafka.OrdersSEC_KafkaEvents[11]
-		sendKafkaEvent(kafka.KafkaTopics["order_sec"], event)
+		eventMessage := models.KafkaOrderEvent{
+			Event: kafka.OrdersSEC_KafkaEvents[11],
+			Order: event.Order,
+			CreatedAt: time.Now().String(),
+			Source: "SHIPPING_SERVICE",
+			Status: "PENDING",
+			EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+				Source: event.Source,
+				Status: "SUCCESS",
+				CreatedAt: event.CreatedAt,
+				Event: event.Event,
+			}),
+		}
+
+		sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 		return err
 	}
 
-	kafka_shipping_event := models.KafkaOrderEvent{
+	eventMessage := models.KafkaOrderEvent{
 		Event: kafka.OrdersSEC_KafkaEvents[12],
 		Order: updated_order,
+		CreatedAt: time.Now().String(),
+		Source: "SHIPPING_SERVICE",
+		Status: "PENDING",
+		EventHistory: append(event.EventHistory, models.KafkaEventHistory{
+			Source: event.Source,
+			Status: "SUCCESS",
+			CreatedAt: event.CreatedAt,
+			Event: event.Event,
+		}),
 	}
 
-	sendKafkaEvent(kafka.KafkaTopics["order_sec"], kafka_shipping_event)
+	sendKafkaEvent(kafka.KafkaTopics["order_sec"], eventMessage)
 
 	return nil
 }
