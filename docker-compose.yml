@@ -85,7 +85,8 @@ services:
       - "8080:8080"
     depends_on:
       - kafka
-      - shipping
+      - shipping-db
+      - main-db
     environment:
       MONGOURI: mongodb://admin:1234@main-db:27017
       MONGODATABASE: main-database
@@ -101,6 +102,7 @@ services:
     restart: unless-stopped
     depends_on:
       - kafka
+      - main-db
     environment:
       MONGOURI: mongodb://admin:1234@main-db:27017
       MONGODATABASE: main-database
@@ -114,6 +116,7 @@ services:
     restart: unless-stopped
     depends_on:
       - kafka
+      - main-db
     environment:
       MONGOURI: mongodb://admin:1234@main-db:27017
       MONGODATABASE: main-database
@@ -127,7 +130,8 @@ services:
     restart: unless-stopped
     depends_on:
       - kafka
-      - shipping
+      - shipping-db
+      - main-db
     environment:
       MONGOURI: mongodb://admin:1234@main-db:27017
       MONGODATABASE: main-database
